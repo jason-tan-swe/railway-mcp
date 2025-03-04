@@ -4,7 +4,7 @@ import { serviceService } from '@/services/service.service.js';
 
 export const serviceTools = [
   createTool(
-    "service-list",
+    "service_list",
     "List all services in a specific project",
     {
       projectId: z.string().describe("ID of the project to list services for")
@@ -15,7 +15,7 @@ export const serviceTools = [
   ),
 
   createTool(
-    "service-info",
+    "service_info",
     "Get detailed information about a specific service",
     {
       projectId: z.string().describe("ID of the project"),
@@ -28,7 +28,7 @@ export const serviceTools = [
   ),
 
   createTool(
-    "service-create-from-repo",
+    "service_create_from_repo",
     "Create a new service in a project from a GitHub repository, format as 'owner/repo'",
     {
       projectId: z.string().describe("ID of the project to create the service in"),
@@ -41,7 +41,7 @@ export const serviceTools = [
   ),
 
   createTool(
-    "service-create-from-image",
+    "service_create_from_image",
     "Create a new service in a project from a Docker image",
     {
       projectId: z.string().describe("ID of the project to create the service in"),
@@ -56,7 +56,7 @@ export const serviceTools = [
   // TODO: Add validation for config
   // TODO: Test this
   createTool(
-    "service-update",
+    "service_update",
     "Update service configuration",
     {
       projectId: z.string().describe("ID of the project"),
@@ -77,7 +77,7 @@ export const serviceTools = [
   ),
 
   createTool(
-    "service-delete",
+    "service_delete",
     "Delete a service from a project",
     {
       projectId: z.string().describe("ID of the project"),
@@ -89,7 +89,7 @@ export const serviceTools = [
   ),
 
   createTool(
-    "service-restart",
+    "service_restart",
     "Restart a service in a specific environment",
     {
       serviceId: z.string().describe("ID of the service"),

@@ -4,7 +4,7 @@ import { deploymentService } from '@/services/deployment.service.js';
 
 export const deploymentTools = [
   createTool(
-    "deployment-list",
+    "deployment_list",
     "List recent deployments for a service in a specific environment",
     {
       projectId: z.string().describe("ID of the project"),
@@ -18,13 +18,13 @@ export const deploymentTools = [
   ),
 
   createTool(
-    "deployment-trigger",
+    "deployment_trigger",
     "Trigger a new deployment for a service",
     {
       projectId: z.string().describe("ID of the project"),
       serviceId: z.string().describe("ID of the service"),
       environmentId: z.string().describe("ID of the environment"),
-      commitSha: z.string().optional().describe("Specific commit SHA to deploy")
+      commitSha: z.string().describe("Specific commit SHA to deploy")
     },
     async ({ projectId, serviceId, environmentId, commitSha }) => {
       return deploymentService.triggerDeployment(projectId, serviceId, environmentId, commitSha);
@@ -32,20 +32,19 @@ export const deploymentTools = [
   ),
 
   createTool(
-    "deployment-logs",
+    "deployment_logs",
     "Get logs for a specific deployment",
     {
       deploymentId: z.string().describe("ID of the deployment"),
-      type: z.enum(['build', 'deployment']).optional().describe("Type of logs to fetch"),
       limit: z.number().optional().describe("Maximum number of log entries to fetch")
     },
-    async ({ deploymentId, type = 'deployment', limit = 100 }) => {
-      return deploymentService.getDeploymentLogs(deploymentId, type, limit);
+    async ({ deploymentId, limit = 100 }) => {
+      return deploymentService.getDeploymentLogs(deploymentId, limit);
     }
   ),
 
   createTool(
-    "deployment-health-check",
+    "deployment_health_check",
     "Check the health/status of a deployment",
     {
       deploymentId: z.string().describe("ID of the deployment to check")

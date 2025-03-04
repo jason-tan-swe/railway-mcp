@@ -5,7 +5,7 @@ import { DatabaseType } from '@/types.js';
 
 export const databaseTools = [
   createTool(
-    "database-list-types",
+    "database_list_types",
     "List all available database types that can be deployed",
     {},
     async () => {
@@ -14,15 +14,16 @@ export const databaseTools = [
   ),
 
   createTool(
-    "database-deploy",
+    "database_deploy",
     "Deploy a database service",
     {
       projectId: z.string().describe("ID of the project to deploy the database in"),
       type: z.nativeEnum(DatabaseType).describe("Type of database to deploy"),
+      environmentId: z.string().describe("ID of the environment to deploy the database in"),
       name: z.string().optional().describe("Custom name for the database service (optional)")
     },
-    async ({ projectId, type, name }) => {
-      return databaseService.createDatabase(projectId, type, name);
+    async ({ projectId, type, environmentId, name }) => {
+      return databaseService.createDatabase(projectId, type, environmentId, name);
     }
   )
 ]; 
