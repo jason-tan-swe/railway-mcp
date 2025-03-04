@@ -4,7 +4,7 @@ import { projectService } from '@/services/project.service.js';
 
 export const projectTools = [
   createTool(
-    "project_list",
+    "project-list",
     "List all projects",
     {},
     async () => {
@@ -13,7 +13,7 @@ export const projectTools = [
   ),
 
   createTool(
-    "project_info",
+    "project-info",
     "Get detailed information about a specific project",
     {
       projectId: z.string().describe("ID of the project")
@@ -24,7 +24,7 @@ export const projectTools = [
   ),
 
   createTool(
-    "project_create",
+    "project-create",
     "Create a new project",
     {
       name: z.string().describe("Name of the project"),
@@ -36,7 +36,7 @@ export const projectTools = [
   ),
 
   createTool(
-    "project_delete",
+    "project-delete",
     "Delete a project",
     {
       projectId: z.string().describe("ID of the project to delete")
@@ -47,7 +47,7 @@ export const projectTools = [
   ),
 
   createTool(
-    "project_environments",
+    "project-environments",
     "List all environments in a project",
     {
       projectId: z.string().describe("ID of the project")

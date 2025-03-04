@@ -4,7 +4,7 @@ import { variableService } from '@/services/variable.service.js';
 
 export const variableTools = [
   createTool(
-    "variable_list",
+    "variable-list",
     "List variables for a service in a specific environment",
     {
       projectId: z.string().describe("ID of the project"),
@@ -17,7 +17,7 @@ export const variableTools = [
   ),
 
   createTool(
-    "variable_set",
+    "variable-set",
     "Create or update a variable for a service in a specific environment",
     {
       projectId: z.string().describe("ID of the project"),
@@ -32,7 +32,7 @@ export const variableTools = [
   ),
 
   createTool(
-    "variable_delete",
+    "variable-delete",
     "Delete a variable for a service in a specific environment",
     {
       projectId: z.string().describe("ID of the project"),
@@ -47,7 +47,7 @@ export const variableTools = [
 
   // TODO: Test this better
   createTool(
-    "variable_bulk_set",
+    "variable-bulk-set",
     "Bulk update variables for a service in a specific environment",
     {
       projectId: z.string().describe("ID of the project"),
@@ -62,7 +62,7 @@ export const variableTools = [
 
   // TODO: Test this
   createTool(
-    "variable_copy",
+    "variable-copy",
     "Copy variables from one environment to another",
     {
       projectId: z.string().describe("ID of the project"),

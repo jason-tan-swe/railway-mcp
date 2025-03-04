@@ -4,8 +4,17 @@ import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { DATABASE_CONFIGS, DatabaseType } from '@/types.js';
 
 export class DatabaseService extends BaseService {
+  private static instance: DatabaseService | null = null;
+
   public constructor() {
     super();
+  }
+
+  public static getInstance(): DatabaseService {
+    if (!DatabaseService.instance) {
+      DatabaseService.instance = new DatabaseService();
+    }
+    return DatabaseService.instance;
   }
 
   async listDatabaseTypes() {
@@ -37,7 +46,7 @@ ${databases.map(db => `  💾 ${db.defaultName}
     }
   }
 
-  async createDatabase(projectId: string, type: DatabaseType, environmentId: string, name?: string): Promise<CallToolResult> {
+  async createDatabase(projectId: string, type: DatabaseType, name?: string): Promise<CallToolResult> {
     try {
       const dbConfig = DATABASE_CONFIGS[type];
       if (!dbConfig) {
@@ -58,22 +67,13 @@ ${databases.map(db => `  💾 ${db.defaultName}
         await this.client.variables.upsertVariables(
           Object.entries(dbConfig.variables).map(([name, value]) => ({
             projectId,
-            environmentId,
+            environmentId: service.id, // TODO: Get the correct environment ID
             serviceId: service.id,
             name,
             value
           }))
         );
       }
-      
-      // Setup Proxy
-      await this.client.tcpProxies.tcpProxyCreate({
-        environmentId: environmentId,
-        serviceId: service.id,
-        applicationPort: dbConfig.port
-      });
-
-      // TODO: Setup Volume
 
       return createSuccessResponse({
         text: `Created new ${dbConfig.defaultName} service "${service.name}" (ID: ${service.id})\n` +
