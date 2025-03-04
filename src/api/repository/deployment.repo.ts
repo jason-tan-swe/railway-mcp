@@ -96,7 +96,10 @@ export class DeploymentRepository {
           timestamp
           message
           severity
-          attributes
+          attributes {
+            key
+            value
+          }
         }
       }
     `, { deploymentId, limit });

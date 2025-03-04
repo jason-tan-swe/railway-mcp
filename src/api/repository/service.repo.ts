@@ -13,22 +13,22 @@ export class ServiceRepository {
               node {
                 name
                 id
-            deployments(first: 5) {
-              edges {
-                node {
-                  id
-                  createdAt
-                  canRedeploy
-                  deploymentStopped
-                  environmentId
+                deployments(first: 5) {
+                  edges {
+                    node {
+                      id
+                      createdAt
+                      canRedeploy
+                      deploymentStopped
+                      environmentId
+                    }
+                  }
                 }
               }
             }
           }
         }
       }
-    }
-  }
     `, { projectId });
 
     return data.project.services.edges.map(edge => edge.node);
