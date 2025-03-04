@@ -3,9 +3,17 @@ import { Service, ServiceInstance } from '@/types.js';
 import { createSuccessResponse, createErrorResponse, formatError } from '@/utils/responses.js';
 
 export class ServiceService extends BaseService {
+  private static instance: ServiceService | null = null;
 
   public constructor() {
     super();
+  }
+
+  public static getInstance(): ServiceService {
+    if (!ServiceService.instance) {
+      ServiceService.instance = new ServiceService();
+    }
+    return ServiceService.instance;
   }
 
   async listServices(projectId: string) {

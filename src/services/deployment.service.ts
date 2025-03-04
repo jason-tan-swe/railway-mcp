@@ -4,8 +4,17 @@ import { createSuccessResponse, createErrorResponse, formatError } from '@/utils
 import { getStatusEmoji } from '@/utils/helpers.js';
 
 export class DeploymentService extends BaseService {
+  private static instance: DeploymentService | null = null;
+
   public constructor() {
     super();
+  }
+
+  public static getInstance(): DeploymentService {
+    if (!DeploymentService.instance) {
+      DeploymentService.instance = new DeploymentService();
+    }
+    return DeploymentService.instance;
   }
 
   async listDeployments(projectId: string, serviceId: string, environmentId: string, limit: number = 5) {
@@ -46,11 +55,6 @@ ${deployment.url ? `URL: ${deployment.url}` : ''}`;
 
   async triggerDeployment(projectId: string, serviceId: string, environmentId: string, commitSha?: string) {
     try {
-      // Wait for 5 seconds before triggering deployment
-      // Seems like the LLMs like to call this function multiple times in combination
-      // with the health check function and the list deployments function
-      // so we need to wait a bit to avoid rate limiting
-      await new Promise(resolve => setTimeout(resolve, 5000));
       const deploymentId = await this.client.deployments.triggerDeployment({
         serviceId,
         environmentId,
@@ -66,20 +70,15 @@ ${deployment.url ? `URL: ${deployment.url}` : ''}`;
     }
   }
 
-  async getDeploymentLogs(deploymentId: string, limit: number = 100) {
+  async getDeploymentLogs(deploymentId: string, type: 'build' | 'deployment' = 'deployment', limit: number = 100) {
     try {
-      // Wait for 5 seconds before fetching logs
-      // Seems like the LLMs like to call this function multiple times in combination
-      // with the health check function, so we need to wait a bit to avoid rate limiting
-      await new Promise(resolve => setTimeout(resolve, 5000));
-      const buildLogs = await this.client.deployments.getBuildLogs(deploymentId, limit);
-      const deploymentLogs = await this.client.deployments.getDeploymentLogs(deploymentId, limit);
-
-      const logs: DeploymentLog[] = [...buildLogs.map(log => ({ ...log, type: 'build' as const })), ...deploymentLogs.map(log => ({ ...log, type: 'deployment' as const })) ];
+      const logs: DeploymentLog[] = type === 'build'
+        ? await this.client.deployments.getBuildLogs(deploymentId, limit)
+        : await this.client.deployments.getDeploymentLogs(deploymentId, limit);
 
       if (logs.length === 0) {
         return createSuccessResponse({
-          text: `No logs found for deployment ${deploymentId}`,
+          text: `No ${type} logs found for deployment ${deploymentId}`,
           data: []
         });
       }
@@ -88,7 +87,7 @@ ${deployment.url ? `URL: ${deployment.url}` : ''}`;
         const timestamp = new Date(log.timestamp).toLocaleString();
         const severity = log.severity.toLowerCase();
         const emoji = severity === 'error' ? '❌' : severity === 'warn' ? '⚠️' : '📝';
-        return `[${log.type}] [${timestamp}] ${emoji} ${log.message}`;
+        return `[${timestamp}] ${emoji} ${log.message}`;
       }).join('\n');
 
       return createSuccessResponse({
@@ -96,7 +95,7 @@ ${deployment.url ? `URL: ${deployment.url}` : ''}`;
         data: logs
       });
     } catch (error) {
-      return createErrorResponse(`Error fetching logs: ${formatError(error)}`);
+      return createErrorResponse(`Error fetching ${type} logs: ${formatError(error)}`);
     }
   }
 

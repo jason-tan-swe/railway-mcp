@@ -3,9 +3,17 @@ import { createSuccessResponse, createErrorResponse, formatError } from '@/utils
 import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 
 export class ProjectService extends BaseService {
+  private static instance: ProjectService | null = null;
 
   public constructor() {
     super();
+  }
+
+  public static getInstance(): ProjectService {
+    if (!ProjectService.instance) {
+      ProjectService.instance = new ProjectService();
+    }
+    return ProjectService.instance;
   }
 
   async listProjects() {

@@ -2,9 +2,17 @@ import { BaseService } from '@/services/base.service.js';
 import { createSuccessResponse, createErrorResponse, formatError } from '@/utils/responses.js';
 
 export class VariableService extends BaseService {
+  private static instance: VariableService | null = null;
 
   public constructor() {
     super();
+  }
+
+  public static getInstance(): VariableService {
+    if (!VariableService.instance) {
+      VariableService.instance = new VariableService();
+    }
+    return VariableService.instance;
   }
 
   async listVariables(projectId: string, environmentId: string, serviceId?: string) {
