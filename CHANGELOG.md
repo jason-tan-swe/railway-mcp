@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/jason-tan-swe/railway-mcp/compare/v1.1.0...v1.1.1) (2025-03-04)
+
+
+### Reverts
+
+* Revert "feat: tcpProxies, volume, domain tools" ([b5da97d](https://github.com/jason-tan-swe/railway-mcp/commit/b5da97d4fcb835a981da8e557ae7b8045cb9b6f0))
+
 # [1.1.0](https://github.com/jason-tan-swe/railway-mcp/compare/v1.0.2...v1.1.0) (2025-03-04)
 
 
