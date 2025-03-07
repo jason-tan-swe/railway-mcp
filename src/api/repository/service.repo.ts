@@ -1,5 +1,5 @@
 import { RailwayApiClient } from '@/api/api-client.js';
-import { Service, ServiceInstance, ServiceCreateInput, ProjectResponse } from '@/types.js';
+import { Service, ServiceInstance, ServiceCreateInput, ProjectResponse, RegionCode } from '@/types.js';
 
 export class ServiceRepository {
   constructor(private client: RailwayApiClient) {}
@@ -102,16 +102,9 @@ export class ServiceRepository {
   async updateServiceInstance(
     serviceId: string,
     environmentId: string,
-    updates: Partial<{
-      buildCommand: string;
-      startCommand: string;
-      rootDirectory: string;
-      healthcheckPath: string;
-      numReplicas: number;
-      sleepApplication: boolean;
-    }>
-  ): Promise<void> {
-    await this.client.request<{ serviceInstanceUpdate: boolean }>(`
+    updates: Partial<ServiceInstance>
+  ): Promise<boolean> {
+    const data = await this.client.request<{ serviceInstanceUpdate: boolean }>(`
       mutation serviceInstanceUpdate(
         $serviceId: String!,
         $environmentId: String!,
@@ -120,22 +113,26 @@ export class ServiceRepository {
         $rootDirectory: String,
         $healthcheckPath: String,
         $numReplicas: Int,
-        $sleepApplication: Boolean
+        $sleepApplication: Boolean,
+        $region: String
       ) {
         serviceInstanceUpdate(
+          serviceId: $serviceId,
+          environmentId: $environmentId,
           input: {
-            serviceId: $serviceId,
-            environmentId: $environmentId,
-          },
-          buildCommand: $buildCommand,
-          startCommand: $startCommand,
-          rootDirectory: $rootDirectory,
-          healthcheckPath: $healthcheckPath,
-          numReplicas: $numReplicas,
-          sleepApplication: $sleepApplication
+            buildCommand: $buildCommand,
+            startCommand: $startCommand,
+            rootDirectory: $rootDirectory,
+            healthcheckPath: $healthcheckPath,
+            numReplicas: $numReplicas,
+            sleepApplication: $sleepApplication,
+            region: $region
+          }
         )
       }
     `, { serviceId, environmentId, ...updates });
+
+    return data.serviceInstanceUpdate;
   }
 
   async deleteService(serviceId: string): Promise<void> {

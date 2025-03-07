@@ -1,11 +1,24 @@
+import { createTool, formatToolDescription } from '@/utils/tools.js';
 import { z } from 'zod';
-import { createTool } from '@/utils/tools.js';
 import { volumeService } from '@/services/volume.service.js';
 
 export const volumeTools = [
   createTool(
     "volume_list",
-    "List all volumes in a project",
+    formatToolDescription({
+      type: 'API',
+      description: "List all volumes in a project",
+      bestFor: [
+        "Viewing persistent storage configurations",
+        "Managing data volumes",
+        "Auditing storage usage"
+      ],
+      relations: {
+        prerequisites: ["project_list"],
+        nextSteps: ["volume_create"],
+        related: ["service_info", "database_deploy"]
+      }
+    }),
     {
       projectId: z.string().describe("ID of the project to list volumes for")
     },
@@ -16,14 +29,32 @@ export const volumeTools = [
 
   createTool(
     "volume_create",
-    "Create a new volume in a project",
+    formatToolDescription({
+      type: 'API',
+      description: "Create a new persistent volume for a service",
+      bestFor: [
+        "Setting up database storage",
+        "Configuring persistent data",
+        "Adding file storage"
+      ],
+      notFor: [
+        "Temporary storage needs",
+        "Static file hosting",
+        "Memory caching"
+      ],
+      relations: {
+        prerequisites: ["service_list"],
+        nextSteps: ["volume_list"],
+        related: ["service_update", "database_deploy"]
+      }
+    }),
     {
-      projectId: z.string().describe("ID of the project to create the volume in"),
-      serviceId: z.string().describe("ID of the service to attach the volume to"),
-      environmentId: z.string().describe("ID of the environment to create the volume in"),
-      mountPath: z.string().describe("Path to mount the volume on")
+      projectId: z.string().describe("ID of the project containing the service"),
+      environmentId: z.string().describe("ID of the environment for the volume (usually obtained from service_info)"),
+      serviceId: z.string().describe("ID of the service to attach volume to"),
+      mountPath: z.string().describe("Path where the volume should be mounted in the container")
     },
-    async ({ projectId, serviceId, environmentId, mountPath }) => {
+    async ({ projectId, environmentId, serviceId, mountPath }) => {
       return volumeService.createVolume(projectId, serviceId, environmentId, mountPath);
     }
   ),
@@ -42,7 +73,23 @@ export const volumeTools = [
 
   createTool(
     "volume_delete",
-    "Delete a volume",
+    formatToolDescription({
+      type: 'API',
+      description: "Delete a volume from a service",
+      bestFor: [
+        "Removing unused storage",
+        "Storage cleanup",
+        "Resource management"
+      ],
+      notFor: [
+        "Temporary data removal",
+        "Data backup (use volume_backup first)"
+      ],
+      relations: {
+        prerequisites: ["volume_list"],
+        related: ["service_update"]
+      }
+    }),
     {
       volumeId: z.string().describe("ID of the volume to delete")
     },

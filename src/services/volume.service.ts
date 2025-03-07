@@ -1,7 +1,7 @@
 import { BaseService } from './base.service.js';
 import { createSuccessResponse, createErrorResponse, formatError } from '@/utils/responses.js';
 import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
-
+import { RegionCode } from '@/types.js';
 class VolumeService extends BaseService {
   constructor() {
     super();
@@ -51,10 +51,10 @@ Created: ${new Date(volume.createdAt).toLocaleString()}`
     try {
       const input = { projectId, serviceId, environmentId, mountPath };
 
-      // TODO: Check that the service is NOT running on Metal
-      // Apparently it gives this weird bug where volume
-      // cannot mount on service if service is running on Metal
       const volume = await this.client.volumes.createVolume(input);
+      if (!volume) {
+        return createErrorResponse(`Error creating volume: Failed to create volume for ${serviceId} in environment ${environmentId}`);
+      }
       
       return createSuccessResponse({
         text: `✅ Volume "${volume.name}" created successfully (ID: ${volume.id})`,

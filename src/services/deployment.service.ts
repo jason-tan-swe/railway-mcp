@@ -102,6 +102,10 @@ ${deployment.url ? `URL: ${deployment.url}` : ''}`;
 
   async healthCheckDeployment(deploymentId: string) {
     try {
+      // Wait for 5 seconds before checking status
+      // Seems like the LLMs like to call this function multiple times in combination
+      // with the health check function, so we need to wait a bit
+      await new Promise(resolve => setTimeout(resolve, 5000));
       const status = await this.client.deployments.healthCheckDeployment(deploymentId);
       const emoji = getStatusEmoji(status);
       

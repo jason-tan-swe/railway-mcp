@@ -1,4 +1,22 @@
-// General types
+import { z } from "zod";
+
+/**
+ * NOTE: ALL NON-METAL RAILWAY REGIONS -- TODO: Update when they've fully migrated to metal 🔄
+ */
+export const RegionCodeSchema = z.enum([
+  "asia-southeast1",
+  "asia-southeast1-eqsg3a", 
+  "europe-west4",
+  "europe-west4-drams3a",
+  "us-east4",
+  "us-east4-eqdc4a",
+  "us-west1",
+  "us-west2"
+]);
+
+// This creates the TypeScript type from the schema
+export type RegionCode = z.infer<typeof RegionCodeSchema>;
+
 export interface User {
   id: string;
   name: string | null;
@@ -69,28 +87,30 @@ export interface Service {
   featureFlags: string[];
 }
 
-export interface ServiceInstance {
-  id: string;
-  serviceId: string;
-  serviceName: string;
-  environmentId: string;
-  buildCommand?: string;
-  startCommand?: string;
-  rootDirectory?: string;
-  region?: string;
-  healthcheckPath?: string;
-  sleepApplication?: boolean;
-  numReplicas?: number;
-  builder?: string;
-  cronSchedule?: string;
-  healthcheckTimeout?: number;
-  isUpdatable?: boolean;
-  railwayConfigFile?: string;
-  restartPolicyType?: string;
-  restartPolicyMaxRetries?: number;
-  upstreamUrl?: string;
-  watchPatterns?: string[];
-}
+export const ServiceInstanceSchema = z.object({
+  id: z.string(),
+  serviceId: z.string(),
+  serviceName: z.string(),
+  environmentId: z.string(),
+  buildCommand: z.string().optional(),
+  startCommand: z.string().optional(),
+  rootDirectory: z.string().optional(),
+  region: RegionCodeSchema.optional(),
+  healthcheckPath: z.string().optional(),
+  sleepApplication: z.boolean().optional(),
+  numReplicas: z.number().optional(),
+  builder: z.string().optional(),
+  cronSchedule: z.string().optional(),
+  healthcheckTimeout: z.number().optional(),
+  isUpdatable: z.boolean().optional(),
+  railwayConfigFile: z.string().optional(),
+  restartPolicyType: z.string().optional(),
+  restartPolicyMaxRetries: z.number().optional(),
+  upstreamUrl: z.string().optional(),
+  watchPatterns: z.array(z.string()).optional()
+});
+
+export type ServiceInstance = z.infer<typeof ServiceInstanceSchema>;
 
 export interface Deployment {
   id: string;

@@ -56,34 +56,69 @@ A [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server for in
 - ✅ Authentication with Railway API tokens
 - ✅ Project management (list, info, delete)
 - ✅ Deployment management (list, restart)
-- 🚧🔨⏳ Service management (create from GitHub repo or Docker image, list)
-- 🚧🔨⏳ Variable management (list, create/update, delete)
-- ❌ Service Network management
-- ❌ Volume management
+- ✅  Service management (create from GitHub repo or Docker image, list)
+- ✅  Variable management (list, create/update, delete)
+- ✅ Service Network management
+- ✅ Volume management
 - ❌ Full support for all templates
-   - ❌ Database template support
+   - 🚧🔨⏳	 Database template support
    - Automatic database and networking workflows
-- ❌ Most commonly used workflows
-- ❌ More Robust checks for deployed services
+- 🚧🔨⏳	Most commonly used workflows
+- ❌ Automatic GitHub repository linking for services
 
 ## Installation
 
-### Installing Locally
-
-#### Prerequisites
+### Prerequisites
 
 - Node.js 18+ (for built-in fetch API support)
 - An active Railway account
 - A Railway API token (create one at https://railway.app/account/tokens)
 
+
 #### Quick Start
 
 This MCP server is designed to work with MCP Clients like:
 - Claude for Desktop | ✅ Battle-Tested
+- Cursor | ✅ Needs Testing
 - Cline | 🚧🔨⏳ Needs Testing
-- Cursor | 🚧🔨⏳Needs Testing
 - Windsurf | 🚧🔨⏳ Needs Testing
 - Other MCP Clients | 🚧🔨⏳ Needs Testing
+
+### Installing via Smithery
+
+To install railway-mcp automatically, we recommend using [Smithery](https://smithery.ai/server/@jason-tan-swe/railway-mcp)
+
+**Claude Desktop**
+
+```bash
+npx -y @smithery/cli install @jason-tan-swe/railway-mcp --client claude
+```
+
+**Cursor**
+```
+npx -y @smithery/cli install @jason-tan-swe/railway-mcp --client cursor
+```
+
+
+<details>
+<summary> <h3>Manual Installation For Cursor</h3></summary>
+
+1. Head to your cursor settings and find the MCP section
+
+2. Click 'Add new MCP server'
+
+3. Name it however, you like, we recommend `railway-mcp` for better clarity
+
+4. Paste this command into the 'Command' section, where <RAILWAY_API_TOKEN> is your accounts Railway token:
+
+```bash
+npx -y @jasontanswe/railway-mcp <RAILWAY_API_TOKEN>
+```
+</details>
+
+<details>
+
+<summary><h3>Manual Installation For Claude</h3></summary>
 
 1. Create or edit your Claude for Desktop config file:
    - macOS: `~/Library/Application\ Support/Claude/claude_desktop_config.json`
@@ -133,14 +168,60 @@ Please list all my Railway projects
 ```
 Please configure the Railway API with my token: {YOUR_API_TOKEN_HERE}
 ```
+</details>
 
-### Installing via Smithery
+## Recommendations and Other Information
+This server best combines with MCP-clients that have access to terminal or with Git **(Cursor, Windsurf)**. Using this MCP with others is recommended as railway-mcp orchestrates containers and streamlines your deployment process seamlessly.
 
-To install railway-mcp for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@jason-tan-swe/railway-mcp):
+### Recommended MCP servers to combine with
+- Git || [Official Link](https://github.com/modelcontextprotocol/servers/tree/main/src/git)
+- GitHub || [Official](https://github.com/modelcontextprotocol/servers/tree/main/src/github) || [Smithery](https://smithery.ai/server/@smithery-ai/github)
 
-```bash
-npx -y @smithery/cli install @jason-tan-swe/railway-mcp --client claude
-```
+
+### For Claude
+- Out of the box, Claude does not have terminal access, so it cannot trigger deployments as it will not be able to get the latest commit.
+- Spinning up different services and monitoring them are the best use case with Claude.
+
+
+### For Cursor
+- Use with GitHub MCP or have the repository already setup on GitHub and cloned locally on your machine to leverage full integration with railway-mcp.
+- When Cursor makes a change, it may forget to push it's changes to GitHub causing it to try and deploy a commit that Railway cannot pull.
+  - **SOLUTION:** Always ask or include somewhere in your prompt: `Have you pushed our changes to GitHub yet?`
+
+## Security Considerations
+
+- Railway API tokens provide full access to your account. Keep them secure.
+- When using the environment variable method, your token is stored in the Claude Desktop configuration file.
+- Sensitive variable values are automatically masked when displayed.
+- All API calls use HTTPS for secure communication.
+- The server's memory-only token storage means your token is never written to disk outside of the configuration file.
+
+## Troubleshooting
+
+If you encounter issues:
+
+1. **Token Authentication Issues**
+   - Ensure your API token is valid and has the necessary permissions
+   - If using the environment variable method, check that the token is correctly formatted in the config file
+   - Try using the `configure` tool directly in Claude if the environment token isn't working
+
+2. **Server Connection Issues**
+   - Check that you've installed the latest version of the server
+   - Verify that Node.js version 18 or higher is installed
+   - Restart Claude for Desktop after making changes to the configuration
+
+3. **API Errors**
+   - Verify that you're using correct project, environment, and service IDs
+   - Check Railway's status page for any service disruptions
+   - Railway API has rate limits - avoid making too many requests in a short period
+
+## Contributing
+
+We welcome contributions from the community! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details on how to get started, development guidelines, and debugging information.
+
+
+
+</details>
 
 ## Available Tools
 
@@ -184,7 +265,8 @@ npx -y @smithery/cli install @jason-tan-swe/railway-mcp --client claude
 - `database-deploy` - Deploy a new database service
 </details>
 
-## Example Workflows
+<details>
+<summary>Example Workflows</summary>
 
 ### Setting up a new service
 
@@ -200,33 +282,5 @@ npx -y @smithery/cli install @jason-tan-swe/railway-mcp --client claude
 3. Create or update variables as needed
 4. Delete any obsolete variables
 
-## Security Considerations
+</details>
 
-- Railway API tokens provide full access to your account. Keep them secure.
-- When using the environment variable method, your token is stored in the Claude Desktop configuration file.
-- Sensitive variable values are automatically masked when displayed.
-- All API calls use HTTPS for secure communication.
-- The server's memory-only token storage means your token is never written to disk outside of the configuration file.
-
-## Troubleshooting
-
-If you encounter issues:
-
-1. **Token Authentication Issues**
-   - Ensure your API token is valid and has the necessary permissions
-   - If using the environment variable method, check that the token is correctly formatted in the config file
-   - Try using the `configure` tool directly in Claude if the environment token isn't working
-
-2. **Server Connection Issues**
-   - Check that you've installed the latest version of the server
-   - Verify that Node.js version 18 or higher is installed
-   - Restart Claude for Desktop after making changes to the configuration
-
-3. **API Errors**
-   - Verify that you're using correct project, environment, and service IDs
-   - Check Railway's status page for any service disruptions
-   - Railway API has rate limits - avoid making too many requests in a short period
-
-## Contributing
-
-We welcome contributions from the community! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details on how to get started, development guidelines, and debugging information.

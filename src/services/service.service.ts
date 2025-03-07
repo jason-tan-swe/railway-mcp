@@ -125,7 +125,11 @@ Sleep Mode: ${serviceInstance.sleepApplication ? 'Enabled' : 'Disabled'}${deploy
 
   async updateService(projectId: string, serviceId: string, environmentId: string, config: Partial<ServiceInstance>) {
     try {
-      await this.client.services.updateServiceInstance(serviceId, environmentId, config);
+      const updated = await this.client.services.updateServiceInstance(serviceId, environmentId, config);
+      if (!updated) {
+        return createErrorResponse(`Error updating service: Failed to update service instance of ${serviceId} in environment ${environmentId}`);
+      }
+
       return createSuccessResponse({
         text: `Service configuration updated successfully`
       });
@@ -148,6 +152,7 @@ Sleep Mode: ${serviceInstance.sleepApplication ? 'Enabled' : 'Disabled'}${deploy
   async restartService(serviceId: string, environmentId: string) {
     try {
       await this.client.services.restartService(serviceId, environmentId);
+      await new Promise(resolve => setTimeout(resolve, 5000)); // TEMPORARY UNTIL WEBHOOKS ARE IMPLEMENTED: Wait for 5 seconds to ensure the service is restarted
       return createSuccessResponse({
         text: `Service restarted successfully`
       });

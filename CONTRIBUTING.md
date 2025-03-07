@@ -235,13 +235,29 @@ Here's how these layers work together:
 
 ```typescript
 import { z } from 'zod';
-import { createTool } from '@/utils/tools';
+import { createTool, formatToolDescription } from '@/utils/tools';
 import { exampleService } from '@/services/example.service';
 
 export const exampleTools = [
   createTool(
     "example-action",
-    "Description of what this tool does",
+    formatToolDescription({
+      type: 'API',
+      description: "Description of what this tool does",
+      bestFor: [
+        "Use case 1",
+        "Use case 2"
+      ],
+      notFor: [
+        "Anti-pattern 1"
+      ],
+      relations: {
+        prerequisites: ["required-tool"],
+        alternatives: ["alternative-tool"],
+        nextSteps: ["next-tool"],
+        related: ["related-tool"]
+      }
+    }),
     {
       param1: z.string().describe("Description of parameter 1"),
       param2: z.number().optional().describe("Optional parameter 2"),
