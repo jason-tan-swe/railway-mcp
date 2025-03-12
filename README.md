@@ -27,6 +27,9 @@
   </table>
 </p>
 
+<a href="https://glama.ai/mcp/servers/lwn74iwigz">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/lwn74iwigz/badge" alt="railway-mcp MCP server" />
+</a>
 
 A [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server for integrating with the [Railway.app](https://railway.app) platform.
 
@@ -283,4 +286,3 @@ We welcome contributions from the community! Please see our [Contributing Guidel
 4. Delete any obsolete variables
 
 </details>
-
