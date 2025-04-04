@@ -53,40 +53,17 @@ export class DatabaseService extends BaseService {
             acc[category] = [];
           }
 
-          acc[category].push({
-            type: template.id,
-            defaultName: service.name || template.name,
-            description: template.description,
-            category,
-            source: service.source.image,
-            port: (() => {
-              if (!service.networking?.tcpProxies) return 5432;
-              const proxyConfigs = Object.values(service.networking.tcpProxies);
-              if (proxyConfigs.length === 0) return 5432;
-              const firstProxy = proxyConfigs[0];
-              return firstProxy.port ?? 5432;
-            })(),
-            variables: service.variables
-          });
+          acc[category].push(template);
 
           return acc;
-        }, {} as Record<string, Array<{
-          type: string;
-          defaultName: string;
-          description: string;
-          category: string;
-          source: string;
-          port: number;
-          variables?: Record<string, { defaultValue: string }>;
-        }>>);
+        }, {} as Record<string, Array<DatabaseTemplate>>);
 
       const formattedDatabases = Object.entries(categorizedDatabases)
         .map(([category, databases]) => `
 📁 ${category}
-${databases.map(db => `  💾 ${db.defaultName}
-     Type: ${db.type}
-     Description: ${db.description}
-     Image: ${db.source}`).join('\n')}
+${databases.map(db => `  💾 ${db.name}
+     Id: ${db.id}
+     Description: ${db.description}`).join('\n')}
 `).join('\n');
 
       return createSuccessResponse({
@@ -98,16 +75,16 @@ ${databases.map(db => `  💾 ${db.defaultName}
     }
   }
 
-  async createDatabaseFromTemplate(projectId: string, type: string, region: RegionCode, environmentId: string, name?: string){
+  async createDatabaseFromTemplate(projectId: string, id: string, region: RegionCode, environmentId: string, name?: string){
     try {
       // Get the database template
       const templates = await this.client.templates.listTemplates() as DatabaseTemplate[];
       const template = templates
         .filter(t => t.category?.toLowerCase().includes('storage') || t.category?.toLowerCase().includes('database'))
-        .find(t => t.id === type);
+        .find(t => t.id === id);
       
       if (!template) {
-        return createErrorResponse(`Unsupported database type: ${type}`);
+        return createErrorResponse(`Unsupported database`);
       }
 
       // Get the first service from the template (database templates should only have one)

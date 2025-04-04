@@ -57,11 +57,11 @@ export const databaseTools = [
       projectId: z.string().describe(
         "ID of the project where the database will be deployed"
       ),
-      type: z.nativeEnum(DatabaseType).describe(
-        "Type of database to deploy (e.g., postgresql, mongodb, redis). Use service_create_from_image for other types."
+      id: z.string().describe(
+        "ID of the database template to deploy"
       ),
       region: RegionCodeSchema.describe(
-        "Region where the database should be deployed, try us-west1 before all other regions"
+        "Region where the database should be deployed, pick the region closest to the users location"
       ),
       environmentId: z.string().describe(
         "Environment ID where the database will be deployed (usually obtained from project_info)"
@@ -70,8 +70,8 @@ export const databaseTools = [
         "Optional custom name for the database service. Default: {type}-database"
       )
     },
-    async ({ projectId, type, environmentId, region, name }) => {
-      return databaseService.createDatabaseFromTemplate(projectId, type, region, environmentId, name);
+    async ({ projectId, id, environmentId, region, name }) => {
+      return databaseService.createDatabaseFromTemplate(projectId, id, region, environmentId, name);
     }
   )
 ];
