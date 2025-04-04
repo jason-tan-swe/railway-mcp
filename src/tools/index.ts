@@ -9,6 +9,7 @@ import { tcpProxyTools } from './tcpProxy.tool.js';
 import { variableTools } from './variable.tool.js';
 import { configTools } from './config.tool.js';
 import { volumeTools } from './volume.tool.js';
+import { templateTools } from './template.tool.js';
 
 import { Tool } from '@/utils/tools.js';
 
@@ -24,6 +25,7 @@ export function registerAllTools(server: McpServer) {
     ...variableTools,
     ...configTools,
     ...volumeTools,
+    ...templateTools,
   ] as Tool[];
 
   // Register each tool with the server
