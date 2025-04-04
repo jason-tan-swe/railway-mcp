@@ -1,8 +1,8 @@
 import { GraphQLResponse } from '@/types.js';
 
 export class BaseApiClient {
-  protected readonly apiUrl = 'https://backboard.railway.app/graphql/v2';
-  protected readonly wsUrl = 'wss://backboard.railway.app/graphql/v2';
+  protected readonly apiUrl = 'https://backboard.railway.com/graphql/v2';
+  protected readonly wsUrl = 'wss://backboard.railway.com/graphql/v2';
   protected token: string | null = null;
 
   protected constructor() {
@@ -19,37 +19,47 @@ export class BaseApiClient {
       throw new Error('API token not set. Please either:\n1. Add RAILWAY_API_TOKEN to your environment variables, or\n2. Use the configure tool to set the token manually.');
     }
 
-    const debug = process.env.DEBUG;
-    const isDebug = debug === 'railway:*' || debug?.includes('railway:api');
-
-    if (isDebug) {
-      console.error('GraphQL Request:');
-      console.error('Query:', query);
+    console.error('Query:', query);
+    if (variables) {
       console.error('Variables:', JSON.stringify(variables, null, 2));
     }
 
-    const response = await fetch(this.apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.token}`,
-      },
-      body: JSON.stringify({
-        query,
-        variables,
-      }),
-    });
+    try {
+      const response = await fetch(this.apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.token}`,
+        },
+        body: JSON.stringify({
+          query,
+          variables,
+        }),
+      });
 
-    const result = await response.json() as GraphQLResponse<T>;
+      if (!response.ok) {
+        const text = await response.text();
+        console.error('HTTP Error:', response.status, response.statusText);
+        console.error('Response text:', text);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-    if (isDebug) {
+      const result = await response.json() as GraphQLResponse<T>;
       console.error('GraphQL Response:', JSON.stringify(result, null, 2));
-    }
 
-    if (result.errors && result.errors.length > 0) {
-      throw new Error(result.errors[0].message);
-    }
+      if (result.errors && result.errors.length > 0) {
+        console.error('GraphQL Errors:', JSON.stringify(result.errors, null, 2));
+        throw new Error(result.errors[0].message);
+      }
 
-    return result.data as T;
+      if (!result.data) {
+        throw new Error('No data returned from API');
+      }
+
+      return result.data as T;
+    } catch (error) {
+      console.error('Request error:', error);
+      throw error;
+    }
   }
 } 

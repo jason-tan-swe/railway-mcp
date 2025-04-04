@@ -1,16 +1,37 @@
 import { RailwayApiClient } from '../api-client.js';
 import { GraphQLResponse } from '@/types.js';
 
+interface ServiceConfig {
+  icon?: string;
+  name: string;
+  build?: Record<string, unknown>;
+  deploy?: Record<string, unknown>;
+  source?: {
+    image?: string;
+    repo?: string;
+  };
+  variables?: Record<string, {
+    isOptional?: boolean;
+    description?: string;
+    defaultValue: string;
+  }>;
+  networking?: {
+    tcpProxies?: Record<string, Record<string, unknown>>;
+    serviceDomains?: Record<string, Record<string, unknown>>;
+  };
+  volumeMounts?: Record<string, {
+    mountPath: string;
+  }>;
+}
+
 interface Template {
   id: string;
   name: string;
   description: string;
-  source: {
-    repo?: string;
-    image?: string;
-  };
-  variables?: Record<string, string>;
   category: string;
+  serializedConfig: {
+    services: Record<string, ServiceConfig>;
+  };
 }
 
 interface TemplatesResponse {
@@ -33,23 +54,15 @@ export class TemplateRepository {
               id
               name
               description
-              source {
-                repo
-                image
-              }
-              variables
               category
+              serializedConfig
             }
           }
         }
       }
     `;
 
-    const response = await this.client.request<GraphQLResponse<TemplatesResponse>>(query);
-    if (!response.data) {
-      throw new Error('Failed to fetch templates');
-    }
-
-    return response.data.templates.edges.map(edge => edge.node);
+    const response = await this.client.request<TemplatesResponse>(query);
+    return response.templates.edges.map(edge => edge.node);
   }
 } 

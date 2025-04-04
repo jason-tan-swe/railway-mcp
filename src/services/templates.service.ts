@@ -22,10 +22,23 @@ export class TemplatesService extends BaseService {
       const formattedTemplates = Object.entries(categorizedTemplates)
         .map(([category, templates]) => `
             📁 ${category}
-            ${templates.map(template => `  📦 ${template.name}
+            ${templates.map(template => {
+              const services = Object.entries(template.serializedConfig.services)
+                .map(([id, service]) => `
+                    Service: ${service.name}
+                    ${service.icon ? `Icon: ${service.icon}` : ''}
+                    Source: ${service.source?.image || service.source?.repo || 'N/A'}
+                    Variables: ${Object.keys(service.variables || {}).length} configured
+                    Networking: ${service.networking?.tcpProxies ? 'TCP Proxy enabled' : 'No TCP Proxy'}, ${Object.keys(service.networking?.serviceDomains || {}).length} domains
+                    Volumes: ${Object.keys(service.volumeMounts || {}).length} mounts`
+                ).join('\n');
+
+              return `  📦 ${template.name}
                 ID: ${template.id}
                 Description: ${template.description}
-                Source: ${template.source.repo || template.source.image}`).join('\n')}
+                Services:
+                ${services}`;
+            }).join('\n')}
         `).join('\n');
 
       return createSuccessResponse({
@@ -51,22 +64,30 @@ export class TemplatesService extends BaseService {
         return createErrorResponse(`Template not found: ${templateId}`);
       }
 
+      // Get the first service from the template
+      const [serviceId, serviceConfig] = Object.entries(template.serializedConfig.services)[0];
+      
       const serviceInput = {
         projectId,
-        name: name || template.name,
-        source: template.source
+        name: name || serviceConfig.name,
+        source: {
+          repo: serviceConfig.source?.repo,
+          image: serviceConfig.source?.image
+        }
       };
 
       const service = await this.client.services.createService(serviceInput);
 
       // If there are template variables, set them
-      if (template.variables) {
-        const variables = Object.entries(template.variables).map(([name, value]) => ({
+      if (serviceConfig.variables) {
+        const variables = Object.entries(serviceConfig.variables).map(([name, config]) => ({
           projectId,
           environmentId,
           serviceId: service.id,
           name,
-          value: value.replace('${random_string}', Math.random().toString(36).substring(7))
+          value: config.defaultValue.replace(/\$\{\{\s*secret\((\d+)(?:,\s*"[^"]*")?\)\s*\}\}/, () => 
+            Math.random().toString(36).substring(2, 15)
+          )
         }));
 
         await this.client.variables.upsertVariables(variables);
