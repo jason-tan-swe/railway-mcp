@@ -2,6 +2,7 @@ import { BaseApiClient } from './base-client.js';
 import { DeploymentRepository } from './repository/deployment.repo.js';
 import { DomainRepository } from './repository/domain.repo.js';
 import { EnvironmentRepository } from './repository/environment.repo.js';
+import { LogsRepository } from './repository/logs.repo.js';
 import { ProjectRepository } from './repository/project.repo.js';
 import { ServiceRepository } from './repository/service.repo.js';
 import { TcpProxyRepository } from './repository/tcpProxy.repo.js';
@@ -12,6 +13,7 @@ export class RailwayApiClient extends BaseApiClient {
   public readonly deployments: DeploymentRepository;
   public readonly domains: DomainRepository;
   public readonly environments: EnvironmentRepository;
+  public readonly logs: LogsRepository;
   public readonly projects: ProjectRepository;
   public readonly services: ServiceRepository;
   public readonly tcpProxies: TcpProxyRepository;
@@ -24,6 +26,7 @@ export class RailwayApiClient extends BaseApiClient {
     this.deployments = new DeploymentRepository(this);
     this.domains = new DomainRepository(this);
     this.environments = new EnvironmentRepository(this);
+    this.logs = new LogsRepository(this);
     this.projects = new ProjectRepository(this);
     this.services = new ServiceRepository(this);
     this.tcpProxies = new TcpProxyRepository(this);

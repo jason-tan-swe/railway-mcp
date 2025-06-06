@@ -98,98 +98,110 @@ export const ServiceInstanceSchema = z.object({
   region: RegionCodeSchema.optional(),
   healthcheckPath: z.string().optional(),
   sleepApplication: z.boolean().optional(),
-  numReplicas: z.number().optional(),
-  builder: z.string().optional(),
-  cronSchedule: z.string().optional(),
-  healthcheckTimeout: z.number().optional(),
-  isUpdatable: z.boolean().optional(),
-  railwayConfigFile: z.string().optional(),
-  restartPolicyType: z.string().optional(),
-  restartPolicyMaxRetries: z.number().optional(),
+  domains: z.object({
+    serviceDomains: z.array(z.object({
+      domain: z.string(),
+    })),
+  }),
+  source: z.object({
+    image: z.string().optional(),
+    repo: z.string().optional(),
+    branch: z.string().optional(),
+  }).optional(),
   upstreamUrl: z.string().optional(),
-  watchPatterns: z.array(z.string()).optional()
 });
 
 export type ServiceInstance = z.infer<typeof ServiceInstanceSchema>;
 
-export interface Deployment {
+export interface ServiceMutation {
   id: string;
-  status: string;
-  createdAt: string;
-  serviceId: string;
-  environmentId: string;
-  url?: string;
-  staticUrl?: string;
-  canRedeploy?: boolean;
-  canRollback?: boolean;
+  name: string;
   projectId: string;
-  meta?: Record<string, any>;
-  snapshotId?: string;
-  suggestAddServiceDomain?: boolean;
-  deploymentStopped?: boolean;
 }
 
-export interface DeploymentLog {
+export interface Deployment {
+  id: string;
+  projectId?: string;
+  environmentId?: string;
+  serviceId?: string;
+  createdAt: string;
+  updatedAt?: string;
+  status: DeploymentStatus;
+  canRedeploy?: boolean;
+  meta?: DeploymentMeta;
+  url?: string;
+  deploymentEvents?: Connection<DeploymentEvent>;
+}
+
+export interface DeploymentEvent {
+  id: string;
+  deploymentId: string;
+  status: DeploymentStatus;
   timestamp: string;
+}
+
+export type DeploymentStatus =
+  | 'BUILDING'
+  | 'CANCELLED'
+  | 'CRASHED'
+  | 'DEPLOYING'
+  | 'FAILED'
+  | 'INITIALIZING'
+  | 'QUEUED'
+  | 'REMOVED'
+  | 'REMOVING'
+  | 'RESTARTING'
+  | 'SKIPPED'
+  | 'SUCCESS'
+  | 'WAITING';
+
+export interface DeploymentMeta {
+  repo?: string;
+  branch?: string;
+  prNumber?: string;
+  prTitle?: string;
+  commitHash?: string;
+  commitMessage?: string;
+  commitAuthor?: string;
+}
+
+export interface ServiceDomain {
+  id: string;
+  serviceId: string;
+  environmentId: string;
+  domain: string;
+  createdAt?: string;
+  updatedAt?: string;
+  deletedAt?: string;
+  targetPort?: number;
+  projectId?: string;
+  suffix?: string;
+}
+
+export interface Domain {
+  id: string;
+  domain: string;
+  createdAt?: string;
+  updatedAt?: string;
+  deletedAt?: string;
+  serviceId?: string;
+  projectId?: string;
+}
+
+export interface DomainCheckResult {
+  available: boolean;
   message: string;
-  severity: string;
-  attributes: {
-    key: string;
-    value: string;
-  }[];
-  type: 'build' | 'deployment';
 }
 
 export interface Variable {
+  id: string;
   name: string;
   value: string;
   serviceId?: string;
   environmentId: string;
   projectId: string;
-}
-
-// API Response types
-export interface GraphQLResponse<T> {
-  data?: T;
-  errors?: {
-    message: string;
-    locations?: { line: number; column: number }[];
-    path?: string[];
-  }[];
-}
-
-export interface ProjectsResponse {
-  projects: Connection<Project>;
-}
-
-export interface ProjectResponse {
-  project: Project;
-}
-
-export interface ServicesResponse {
-  services: Connection<Service>;
-}
-
-export interface EnvironmentsResponse {
-  environments: Connection<Environment>;
-}
-
-export interface DeploymentsResponse {
-  deployments: Connection<Deployment>;
-}
-
-export interface VariablesResponse {
-  variables: Record<string, string>;
-}
-
-// API Input types
-export interface ServiceCreateInput {
-  projectId: string;
-  name?: string;
-  source: {
-    repo?: string;
-    image?: string;
-  };
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface VariableUpsertInput {
@@ -207,311 +219,302 @@ export interface VariableDeleteInput {
   name: string;
 }
 
-export interface DeploymentTriggerInput {
-  commitSha?: string;
-  environmentId: string;
-  serviceId: string;
-}
-
-// Database types
-export enum DatabaseType {
-  POSTGRES = 'postgres',
-  MYSQL = 'mysql',
-  MONGODB = 'mongodb',
-  REDIS = 'redis',
-  MINIO = 'minio',
-  SQLITE3 = 'sqlite3',
-  POCKETBASE = 'pocketbase',
-  CLICKHOUSE = 'clickhouse',
-  MARIADB = 'mariadb',
-  PGVECTOR = 'pgvector',
-}
-
-export interface DatabaseConfig {
-  source: string;
-  defaultName: string;
-  description: string;
-  category: string;
-  variables?: Record<string, string>;
-  port: number;
-}
-
-export const DATABASE_CONFIGS: Record<DatabaseType, DatabaseConfig> = {
-  [DatabaseType.POSTGRES]: {
-    source: 'ghcr.io/railwayapp-templates/postgres-ssl:15',
-    defaultName: 'PostgreSQL',
-    description: 'PostgreSQL database service',
-    category: 'SQL Databases',
-    port: 5432,
-    variables: {
-      // Variables for Railway
-      DATABASE_PUBLIC_URL: "postgresql://${{PGUSER}}:${{POSTGRES_PASSWORD}}@${{RAILWAY_TCP_PROXY_DOMAIN}}:${{RAILWAY_TCP_PROXY_PORT}}/${{PGDATABASE}}",
-      DATABASE_URL: "postgresql://${{PGUSER}}:${{POSTGRES_PASSWORD}}@${{RAILWAY_PRIVATE_DOMAIN}}:${{PGPORT}}/${{PGDATABASE}}",
-      PGDATA: "/var/lib/postgresql/data/pgdata", // for Volume Mounting in Railway
-      PGDATABASE: "${{POSTGRES_DB}}",
-      PGHOST: "${{RAILWAY_PRIVATE_DOMAIN}}",
-      PGPASSWORD: "${{POSTGRES_PASSWORD}}",
-      PGPORT: "5432",
-      PGUSER: "${{POSTGRES_USER}}",
-      
-      // Docker variables
-      POSTGRES_DB: "postgres-db",
-      POSTGRES_PASSWORD: "postgres-password",
-      POSTGRES_USER: "postgres-user",
-    }
-  },
-  [DatabaseType.MYSQL]: {
-    source: 'mysql:latest',
-    defaultName: 'MySQL',
-    description: 'MySQL database service',
-    category: 'SQL Databases',
-    port: 3306,
-    variables: {
-      // Railway variables
-      MYSQLHOST: "${{RAILWAY_PRIVATE_DOMAIN}}",
-      MYSQLPASSWORD: "${{MYSQL_ROOT_PASSWORD}}",
-      MYSQLDATABASE: "${{MYSQL_DATABASE}}",
-
-      // Docker variables
-      MYSQL_DATABASE: "mysql-db",
-      MYSQL_PUBLIC_URL: "mysql://${{MYSQLUSER}}:${{MYSQL_ROOT_PASSWORD}}@${{RAILWAY_TCP_PROXY_DOMAIN}}:${{RAILWAY_TCP_PROXY_PORT}}/${{MYSQL_DATABASE}}",
-      MYSQL_URL: "mysql://${{MYSQLUSER}}:${{MYSQL_ROOT_PASSWORD}}@${{RAILWAY_PRIVATE_DOMAIN}}:${{MYSQLPORT}}/${{MYSQL_DATABASE}}",
-      MYSQL_ROOT_PASSWORD: "mysql-password",
-      MYSQLUSER: "root",
-      MYSQLPORT: "3306",
-    },
-  },
-  [DatabaseType.MONGODB]: {
-    source: 'mongo:7',
-    defaultName: 'MongoDB',
-    description: 'MongoDB NoSQL database service',
-    category: 'NoSQL Databases',
-    port: 27017,
-    variables: {
-      // Docker
-      MONGO_INITDB_ROOT_PASSWORD: "mongo-password",
-      MONGO_INITDB_ROOT_USERNAME: "mongo-user",
-      MONGO_PUBLIC_URL: "mongodb://${{MONGO_INITDB_ROOT_USERNAME}}:${{MONGO_INITDB_ROOT_PASSWORD}}@${{RAILWAY_TCP_PROXY_DOMAIN}}:${{RAILWAY_TCP_PROXY_PORT}}",
-      MONGO_URL: "mongodb://${{MONGO_INITDB_ROOT_USERNAME}}:${{MONGO_INITDB_ROOT_PASSWORD}}@${{RAILWAY_PRIVATE_DOMAIN}}:${{MONGO_PORT}}",
-
-      // Railway
-      MONGOHOST: "${{RAILWAY_PRIVATE_DOMAIN}}",
-      MONGOPASSWORD: "${{MONGO_INITDB_ROOT_PASSWORD}}",
-      MONGOPORT: "27017",
-      MONGOUSER: "${{MONGO_INITDB_ROOT_USERNAME}}",
-    },
-  },
-  [DatabaseType.REDIS]: {
-    source: 'bitnami/redis:7.2.5',
-    defaultName: 'Redis',
-    description: 'Redis in-memory data store',
-    category: 'In-Memory Stores',
-    port: 6379,
-    variables: {
-      // Docker
-      REDIS_PASSWORD: "redis-password",
-      REDIS_PORT: "6379",
-      REDISUSER: "default",
-      REDIS_RDB_POLICY: "3600#1 300#100 60#10000",
-      REDISPORT: "6379",
-      REDIS_AOF_ENABLED: "no",
-      
-      // Railway
-      REDISPASSWORD: "${{REDIS_PASSWORD}}",
-      REDISHOST: "${{RAILWAY_PRIVATE_DOMAIN}}",
-      RAILWAY_RUN_UID: "0",
-      REDIS_PUBLIC_URL: "redis://${{REDISUSER}}:${{REDIS_PASSWORD}}@${{RAILWAY_TCP_PROXY_DOMAIN}}:${{RAILWAY_TCP_PROXY_PORT}}",
-      REDIS_URL: "redis://${{REDISUSER}}:${{REDIS_PASSWORD}}@${{RAILWAY_PRIVATE_DOMAIN}}:${{REDISPORT}}",
-      RAILWAY_RUN_AS_ROOT: "true",
-    },
-  },
-  [DatabaseType.MINIO]: {
-    source: 'minio:latest',
-    defaultName: 'MinIO',
-    description: 'MinIO object storage service',
-    category: 'Object Storage',
-    port: 9000,
-  },
-  [DatabaseType.SQLITE3]: {
-    source: 'sqlite:latest',
-    defaultName: 'SQLite',
-    description: 'SQLite relational database',
-    category: 'SQL Databases',
-    port: 5432,
-  },
-  [DatabaseType.POCKETBASE]: {
-    source: 'pocketbase/pocketbase:latest',
-    defaultName: 'PocketBase',
-    description: 'PocketBase lightweight, open-source, self-hosted backend',
-    category: 'SQL Databases',
-    port: 8080,
-  },
-  [DatabaseType.CLICKHOUSE]: {
-    source: 'clickhouse/clickhouse-server:23',
-    defaultName: 'ClickHouse',
-    description: 'ClickHouse column-oriented database',
-    category: 'Analytics Databases',
-    port: 8123,
-  },
-  [DatabaseType.MARIADB]: {
-    source: 'mariadb:10',
-    defaultName: 'MariaDB',
-    description: 'MariaDB relational database',
-    category: 'SQL Databases',
-    port: 3306,
-  },
-  [DatabaseType.PGVECTOR]: {
-    source: 'postgres:14',
-    defaultName: 'PGVector',
-    description: 'PGVector vector database',
-    category: 'Vector Databases',
-    port: 5432,
-  },
-};
-
-/**
- * Input type for creating a service domain
- */
-export interface ServiceDomainCreateInput {
-  /** ID of the environment */
-  environmentId: string;
-  /** ID of the service */
-  serviceId: string;
-  /** Custom domain name (optional) */
-  domain?: string;
-  /** Suffix for the domain (optional) */
-  suffix?: string;
-  /** Target port for the domain (optional) */
-  targetPort?: number;
-}
-
-/**
- * Input type for updating a service domain
- */
-export interface ServiceDomainUpdateInput {
-  /** ID of the domain to update */
-  id: string;
-  /** New target port for the domain */
-  targetPort: number;
-}
-
-/**
- * Service domain model
- */
-export interface ServiceDomain {
-  /** Unique identifier */
-  id: string;
-  /** Creation timestamp */
-  createdAt: string;
-  /** Deletion timestamp, null if not deleted */
-  deletedAt: string | null;
-  /** Full domain name */
-  domain: string;
-  /** ID of the environment */
-  environmentId: string;
-  /** ID of the project */
-  projectId: string;
-  /** ID of the service */
-  serviceId: string;
-  /** Suffix part of the domain (for service domains) */
-  suffix: string | null;
-  /** Target port the domain maps to */
-  targetPort: number | null;
-  /** Last update timestamp */
-  updatedAt: string;
-}
-
-/**
- * Domain availability check result
- */
-export interface DomainAvailabilityResult {
-  /** Whether the domain is available */
-  available: boolean;
-  /** Message explaining availability status */
-  message: string;
-}
-
-/**
- * Result of listing domains for a service
- */
-export interface DomainsListResult {
-  /** List of custom domains */
-  customDomains: ServiceDomain[];
-  /** List of service domains */
-  serviceDomains: ServiceDomain[];
-}
-
-/**
- * TCP Proxy model
- */
 export interface TcpProxy {
-  /** Unique identifier */
   id: string;
-  /** Creation timestamp */
-  createdAt: string;
-  /** Deletion timestamp, null if not deleted */
-  deletedAt: string | null;
-  /** Domain for the TCP proxy */
+  serviceId: string;
+  environmentId: string;
   domain: string;
-  /** ID of the environment */
-  environmentId: string;
-  /** ID of the service */
-  serviceId: string;
-  /** Container port that will be proxied */
-  applicationPort: number;
-  /** Proxy port that gets exposed */
-  proxyPort: number;
-  /** Last update timestamp */
-  updatedAt: string;
-}
-
-/**
- * Input type for creating a TCP proxy
- */
-export interface TcpProxyCreateInput {
-  /** ID of the environment */
-  environmentId: string;
-  /** ID of the service */
-  serviceId: string;
-  /** Container port that will be proxied */
+  proxyType: 'TCP';
+  createdAt?: string;
+  updatedAt?: string;
+  deletedAt?: string;
   applicationPort: number;
 }
 
 export interface Volume {
-  __typename?: string;
-  createdAt: string;
   id: string;
-  name: string;
-  project: Project;
   projectId: string;
-  volumeInstances: Connection<VolumeInstance[]>;
-}
-
-export interface VolumeCreateInput {
-  projectId: string; // Project to create volume in
-  serviceId: string; // Service to attach volume to
-  environmentId: string; // Environment to create volume in
-  mountPath: string; // Path to mount volume on
-}
-
-export interface VolumeUpdateInput {
+  environmentId: string;
+  serviceId?: string;
   name: string;
+  mountPath: string;
+  size: number;
+  createdAt?: string;
+  updatedAt?: string;
+  deletedAt?: string;
 }
 
 export interface VolumeInstance {
-  __typename?: string;
-  createdAt: string;
-  currentSizeMB?: number;
-  environmentId: string;
-  externalId?: string;
   id: string;
-  mountPath?: string;
-  region?: string;
-  service: Service;
-  serviceId?: string;
-  sizeMB?: number;
-  state?: string;
-  type?: string;
-  volume: Volume;
   volumeId: string;
+  environmentId: string;
+  mountPath: string;
+  state?: VolumeState;
+  size?: number;
+  region?: string;
+  externalId?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
+
+export type VolumeState = 'ATTACHED' | 'CREATED' | 'CREATING' | 'DELETING' | 'DETACHED' | 'ERRORED' | 'UPDATING';
+
+// API Response Types
+export interface BaseResponse {
+  success: boolean;
+  message: string;
+  data?: unknown;
+}
+
+export interface ProjectResponse {
+  project: Project;
+}
+
+export interface ProjectsResponse {
+  projects: Connection<Project>;
+}
+
+export interface ServiceResponse {
+  service: Service;
+}
+
+export interface ServiceCreateResponse {
+  serviceCreate: Service;
+}
+
+export interface ServiceDeleteResponse {
+  serviceDelete: boolean;
+}
+
+export interface ServiceMutationResponse {
+  serviceUpdate: ServiceMutation;
+}
+
+export interface DeploymentResponse {
+  deployment: Deployment;
+}
+
+export interface DeploymentsResponse {
+  deployments: Connection<Deployment>;
+}
+
+export interface DeploymentCreateResponse {
+  deploymentCreate: Deployment;
+}
+
+export interface DomainCheckResponse {
+  domainAvailable: DomainCheckResult;
+}
+
+export interface ServiceDomainCreateResponse {
+  serviceDomainCreate: ServiceDomain;
+}
+
+export interface ServiceDomainsResponse {
+  serviceDomains: Connection<ServiceDomain>;
+}
+
+export interface VariablesResponse {
+  variables: Record<string, string>;
+}
+
+export interface TcpProxyCreateResponse {
+  tcpProxyCreate: TcpProxy;
+}
+
+export interface VolumeResponse {
+  volume: Volume;
+}
+
+export interface VolumeInstanceResponse {
+  volumeInstance: VolumeInstance;
+}
+
+// Service types
+export interface DatabaseService extends Service {
+  databaseType?: string;
+  databaseName?: string;
+  databaseUser?: string;
+}
+
+// Database configs
+export type DatabaseCategory = 'TRADITIONAL' | 'CACHE' | 'SEARCH' | 'MODERN' | 'TIME_SERIES' | 'EMBEDDED';
+
+export interface DatabaseConfig {
+  name: string;
+  type: DatabaseType;
+  category: DatabaseCategory;
+  description: string;
+  connectionStringPattern: string;
+  defaultPort: number;
+  variables: string[];
+  defaultUser?: string;
+  defaultDatabase?: string;
+  requiresPassword?: boolean;
+  imageName?: string;
+  volumePath?: string;
+  startCommand?: string;
+  port: number;
+}
+
+// All supported database types
+export const DatabaseType = {
+  PostgreSQL: 'postgresql',
+  MySQL: 'mysql',
+  Redis: 'redis',
+  MongoDB: 'mongodb',
+  // MariaDB: 'mariadb',
+  // SQLite: 'sqlite',
+  // ElasticSearch: 'elasticsearch',
+  // CockroachDB: 'cockroachdb',
+  // Cassandra: 'cassandra',
+  // Neo4j: 'neo4j',
+  // InfluxDB: 'influxdb',
+  // Prometheus: 'prometheus',
+  // Grafana: 'grafana',
+  // RabbitMQ: 'rabbitmq',
+  // Kafka: 'kafka',
+  // Memcached: 'memcached',
+  // Etcd: 'etcd',
+  // Consul: 'consul',
+  // Vault: 'vault'
+} as const;
+
+export type DatabaseType = typeof DatabaseType[keyof typeof DatabaseType];
+
+export const DATABASE_CONFIGS: Record<DatabaseType, DatabaseConfig> = {
+  [DatabaseType.PostgreSQL]: {
+    name: 'PostgreSQL',
+    type: DatabaseType.PostgreSQL,
+    category: 'TRADITIONAL',
+    description: 'Advanced open-source relational database with JSON support',
+    connectionStringPattern: 'postgresql://${{PGUSER}}:${{PGPASSWORD}}@${{PGHOST}}:${{PGPORT}}/${{PGDATABASE}}',
+    defaultPort: 5432,
+    variables: ['PGUSER', 'PGPASSWORD', 'PGHOST', 'PGPORT', 'PGDATABASE', 'DATABASE_URL', 'POSTGRES_USER', 'POSTGRES_PASSWORD', 'POSTGRES_DB'],
+    defaultUser: 'postgres',
+    defaultDatabase: 'railway',
+    requiresPassword: true,
+    imageName: 'postgres',
+    volumePath: '/var/lib/postgresql/data',
+    port: 5432
+  },
+  [DatabaseType.MySQL]: {
+    name: 'MySQL',
+    type: DatabaseType.MySQL,
+    category: 'TRADITIONAL',
+    description: 'Popular open-source relational database',
+    connectionStringPattern: 'mysql://${{MYSQL_USER}}:${{MYSQL_PASSWORD}}@${{MYSQL_HOST}}:${{MYSQL_PORT}}/${{MYSQL_DATABASE}}',
+    defaultPort: 3306,
+    variables: ['MYSQL_USER', 'MYSQL_PASSWORD', 'MYSQL_HOST', 'MYSQL_PORT', 'MYSQL_DATABASE', 'MYSQL_ROOT_PASSWORD'],
+    defaultUser: 'root',
+    defaultDatabase: 'railway',
+    requiresPassword: true,
+    imageName: 'mysql',
+    volumePath: '/var/lib/mysql',
+    port: 3306
+  },
+  [DatabaseType.Redis]: {
+    name: 'Redis',
+    type: DatabaseType.Redis,
+    category: 'CACHE',
+    description: 'In-memory data structure store and cache',
+    connectionStringPattern: 'redis://:${{REDIS_PASSWORD}}@${{REDIS_HOST}}:${{REDIS_PORT}}',
+    defaultPort: 6379,
+    variables: ['REDIS_URL', 'REDIS_HOST', 'REDIS_PORT', 'REDIS_PASSWORD'],
+    requiresPassword: true,
+    imageName: 'redis',
+    startCommand: 'redis-server --requirepass ${{REDIS_PASSWORD}}',
+    port: 6379
+  },
+  [DatabaseType.MongoDB]: {
+    name: 'MongoDB',
+    type: DatabaseType.MongoDB,
+    category: 'MODERN',
+    description: 'Document-oriented NoSQL database',
+    connectionStringPattern: 'mongodb://${{MONGO_INITDB_ROOT_USERNAME}}:${{MONGO_INITDB_ROOT_PASSWORD}}@${{MONGO_HOST}}:${{MONGO_PORT}}',
+    defaultPort: 27017,
+    variables: ['MONGO_URL', 'MONGO_HOST', 'MONGO_PORT', 'MONGO_INITDB_ROOT_USERNAME', 'MONGO_INITDB_ROOT_PASSWORD'],
+    defaultUser: 'root',
+    requiresPassword: true,
+    imageName: 'mongo',
+    volumePath: '/data/db',
+    port: 27017
+  }
+};
+
+// Logs and Monitoring Types
+export interface LogEntry {
+  id?: string;
+  timestamp: string;
+  message: string;
+  severity?: LogSeverity;
+  attributes?: Record<string, any>;
+  tags?: string[];
+  deploymentId?: string;
+  environmentId?: string;
+  serviceId?: string;
+}
+
+export type LogSeverity = 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'FATAL';
+
+export interface HttpLogEntry {
+  id?: string;
+  timestamp: string;
+  requestId: string;
+  deploymentId: string;
+  deploymentInstanceId?: string;
+  environmentId?: string;
+  serviceId?: string;
+  
+  // Request details
+  method: string;
+  path: string;
+  host: string;
+  clientUa?: string;
+  srcIp?: string;
+  
+  // Response details
+  httpStatus: number;
+  responseDetails?: string;
+  totalDuration: number;
+  
+  // Network details
+  downstreamProto?: string;
+  upstreamProto?: string;
+  upstreamAddress?: string;
+  upstreamRqDuration?: number;
+  edgeRegion?: string;
+  
+  // Data transfer
+  rxBytes: number;
+  txBytes: number;
+}
+
+export interface MetricDataPoint {
+  timestamp: string;
+  value: number;
+  tags: Record<string, string>;
+}
+
+export interface Metric {
+  measurement: MetricMeasurement;
+  tags: Record<string, string>;
+  values: MetricDataPoint[];
+}
+
+export type MetricMeasurement = 
+  | 'CPU_USAGE'
+  | 'MEMORY_USAGE'
+  | 'NETWORK_RX'
+  | 'NETWORK_TX'
+  | 'DISK_USAGE'
+  | 'HTTP_REQUEST_COUNT'
+  | 'HTTP_REQUEST_DURATION';
+
+export type MetricTag =
+  | 'PROJECT_ID'
+  | 'ENVIRONMENT_ID'
+  | 'SERVICE_ID'
+  | 'DEPLOYMENT_ID'
+  | 'PLUGIN_ID'
+  | 'VOLUME_ID';
