@@ -3,6 +3,7 @@ import { CustomDomainRepository } from './repository/customDomain.repo.js';
 import { DeploymentRepository } from './repository/deployment.repo.js';
 import { DomainRepository } from './repository/domain.repo.js';
 import { EnvironmentRepository } from './repository/environment.repo.js';
+import { GitHubRepository } from './repository/github.repo.js';
 import { LogsRepository } from './repository/logs.repo.js';
 import { ProjectRepository } from './repository/project.repo.js';
 import { ServiceRepository } from './repository/service.repo.js';
@@ -15,6 +16,7 @@ export class RailwayApiClient extends BaseApiClient {
   public readonly deployments: DeploymentRepository;
   public readonly domains: DomainRepository;
   public readonly environments: EnvironmentRepository;
+  public readonly github: GitHubRepository;
   public readonly logs: LogsRepository;
   public readonly projects: ProjectRepository;
   public readonly services: ServiceRepository;
@@ -29,6 +31,7 @@ export class RailwayApiClient extends BaseApiClient {
     this.deployments = new DeploymentRepository(this);
     this.domains = new DomainRepository(this);
     this.environments = new EnvironmentRepository(this);
+    this.github = new GitHubRepository(this);
     this.logs = new LogsRepository(this);
     this.projects = new ProjectRepository(this);
     this.services = new ServiceRepository(this);

@@ -6,6 +6,7 @@ import { databaseTools } from './database.tool.js';
 import { deploymentTools } from './deployment.tool.js';
 import { domainTools } from './domain.tool.js';
 import { environmentTools } from './environment.tool.js';
+import { gitHubTools } from './github.tool.js';
 import { logsTools } from './logs.tool.js';
 import { projectTools } from './project.tool.js';
 import { serviceTools } from './service.tool.js';
@@ -24,6 +25,7 @@ export function registerAllTools(server: McpServer) {
     ...deploymentTools,
     ...domainTools,
     ...environmentTools,
+    ...gitHubTools,
     ...logsTools,
     ...projectTools,
     ...serviceTools,
