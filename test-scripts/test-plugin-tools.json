@@ -1,0 +1,123 @@
+{
+  "test_cases": [
+    {
+      "name": "plugin-types",
+      "description": "List all supported database plugin types",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "tools/call",
+        "params": {
+          "name": "plugin-types",
+          "arguments": {}
+        }
+      }
+    },
+    {
+      "name": "plugin-create",
+      "description": "Create a PostgreSQL plugin",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 2,
+        "method": "tools/call",
+        "params": {
+          "name": "plugin-create",
+          "arguments": {
+            "projectId": "your-project-id",
+            "pluginName": "postgresql",
+            "friendlyName": "Test PostgreSQL DB"
+          }
+        }
+      },
+      "note": "Replace 'your-project-id' with actual project ID"
+    },
+    {
+      "name": "plugin-get",
+      "description": "Get plugin details",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 3,
+        "method": "tools/call",
+        "params": {
+          "name": "plugin-get",
+          "arguments": {
+            "pluginId": "your-plugin-id"
+          }
+        }
+      },
+      "note": "Replace 'your-plugin-id' with actual plugin ID from create response"
+    },
+    {
+      "name": "plugin-update",
+      "description": "Update plugin configuration",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 4,
+        "method": "tools/call",
+        "params": {
+          "name": "plugin-update",
+          "arguments": {
+            "pluginId": "your-plugin-id",
+            "friendlyName": "Updated PostgreSQL DB",
+            "logsEnabled": true
+          }
+        }
+      }
+    },
+    {
+      "name": "plugin-restart",
+      "description": "Restart plugin",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 5,
+        "method": "tools/call",
+        "params": {
+          "name": "plugin-restart",
+          "arguments": {
+            "pluginId": "your-plugin-id",
+            "environmentId": "your-environment-id"
+          }
+        }
+      }
+    },
+    {
+      "name": "plugin-reset-credentials",
+      "description": "Reset plugin credentials",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 6,
+        "method": "tools/call",
+        "params": {
+          "name": "plugin-reset-credentials",
+          "arguments": {
+            "pluginId": "your-plugin-id"
+          }
+        }
+      }
+    },
+    {
+      "name": "plugin-delete",
+      "description": "Delete plugin (warning: data will be lost)",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 7,
+        "method": "tools/call",
+        "params": {
+          "name": "plugin-delete",
+          "arguments": {
+            "pluginId": "your-plugin-id"
+          }
+        }
+      },
+      "warning": "This will permanently delete the plugin and all data"
+    }
+  ],
+  "usage_instructions": [
+    "1. Start the MCP server: npm run build && npm start",
+    "2. Test plugin types first: echo '{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"plugin-types\", \"arguments\": {}}}' | nc localhost 3000",
+    "3. Get a project ID using project_list tool first",
+    "4. Create a plugin with the project ID",
+    "5. Use the returned plugin ID for other operations",
+    "6. Test other operations with actual IDs"
+  ]
+}

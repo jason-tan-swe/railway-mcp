@@ -26,7 +26,7 @@ class VolumeService extends BaseService {
 
       const volumeDetails = volumes.map(volume => 
         `📦 ${volume.name} (ID: ${volume.id})
-Created: ${new Date(volume.createdAt).toLocaleString()}`
+Created: ${volume.createdAt ? new Date(volume.createdAt).toLocaleString() : 'N/A'}`
       );
 
       return createSuccessResponse({

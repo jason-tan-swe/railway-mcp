@@ -98,6 +98,7 @@ export const ServiceInstanceSchema = z.object({
   region: RegionCodeSchema.optional(),
   healthcheckPath: z.string().optional(),
   sleepApplication: z.boolean().optional(),
+  numReplicas: z.number().optional(),
   domains: z.object({
     serviceDomains: z.array(z.object({
       domain: z.string(),
@@ -131,6 +132,7 @@ export interface Deployment {
   meta?: DeploymentMeta;
   url?: string;
   deploymentEvents?: Connection<DeploymentEvent>;
+  deploymentStopped?: boolean;
 }
 
 export interface DeploymentEvent {
@@ -229,6 +231,7 @@ export interface TcpProxy {
   updatedAt?: string;
   deletedAt?: string;
   applicationPort: number;
+  proxyPort: number;
 }
 
 export interface Volume {
@@ -355,6 +358,8 @@ export interface DatabaseConfig {
   volumePath?: string;
   startCommand?: string;
   port: number;
+  defaultName: string;
+  source: string;
 }
 
 // All supported database types
@@ -396,7 +401,9 @@ export const DATABASE_CONFIGS: Record<DatabaseType, DatabaseConfig> = {
     requiresPassword: true,
     imageName: 'postgres',
     volumePath: '/var/lib/postgresql/data',
-    port: 5432
+    port: 5432,
+    defaultName: 'postgres',
+    source: 'postgresql'
   },
   [DatabaseType.MySQL]: {
     name: 'MySQL',
@@ -411,7 +418,9 @@ export const DATABASE_CONFIGS: Record<DatabaseType, DatabaseConfig> = {
     requiresPassword: true,
     imageName: 'mysql',
     volumePath: '/var/lib/mysql',
-    port: 3306
+    port: 3306,
+    defaultName: 'mysql',
+    source: 'mysql'
   },
   [DatabaseType.Redis]: {
     name: 'Redis',
@@ -424,7 +433,9 @@ export const DATABASE_CONFIGS: Record<DatabaseType, DatabaseConfig> = {
     requiresPassword: true,
     imageName: 'redis',
     startCommand: 'redis-server --requirepass ${{REDIS_PASSWORD}}',
-    port: 6379
+    port: 6379,
+    defaultName: 'redis',
+    source: 'redis'
   },
   [DatabaseType.MongoDB]: {
     name: 'MongoDB',
@@ -438,7 +449,9 @@ export const DATABASE_CONFIGS: Record<DatabaseType, DatabaseConfig> = {
     requiresPassword: true,
     imageName: 'mongo',
     volumePath: '/data/db',
-    port: 27017
+    port: 27017,
+    defaultName: 'mongo',
+    source: 'mongodb'
   }
 };
 
@@ -518,3 +531,104 @@ export type MetricTag =
   | 'DEPLOYMENT_ID'
   | 'PLUGIN_ID'
   | 'VOLUME_ID';
+
+// GraphQL Response Types
+export interface GraphQLResponse<T> {
+  data?: T;
+  errors?: Array<{
+    message: string;
+    path?: (string | number)[];
+    extensions?: Record<string, any>;
+  }>;
+}
+
+// Additional missing types
+export interface DeploymentLog {
+  id: string;
+  message: string;
+  timestamp: string;
+  severity: LogSeverity;
+  type: string;
+}
+
+export interface DeploymentTriggerInput {
+  serviceId: string;
+  environmentId: string;
+  commitSha?: string;
+}
+
+export interface ServiceDomainCreateInput {
+  serviceId: string;
+  environmentId: string;
+  domain?: string;
+  suffix?: string;
+}
+
+export interface ServiceDomainUpdateInput {
+  id: string;
+  domain?: string;
+  targetPort?: number;
+}
+
+export interface DomainAvailabilityResult {
+  available: boolean;
+  message: string;
+}
+
+export interface DomainsListResult {
+  domains: Domain[];
+  serviceDomains: ServiceDomain[];
+  customDomains: Domain[];
+}
+
+export interface ServiceCreateInput {
+  projectId: string;
+  name: string;
+  source?: {
+    image?: string;
+    repo?: string;
+    branch?: string;
+  };
+}
+
+export interface TcpProxyCreateInput {
+  serviceId: string;
+  environmentId: string;
+  applicationPort: number;
+}
+
+export interface VolumeCreateInput {
+  projectId: string;
+  environmentId: string;
+  name: string;
+  mountPath: string;
+  size?: number;
+}
+
+export interface VolumeUpdateInput {
+  name?: string;
+  mountPath?: string;
+}
+
+export interface Template {
+  id: string;
+  name: string;
+  description?: string;
+  services: Array<{
+    id: string;
+    name: string;
+    source?: {
+      image?: string;
+      repo?: string;
+      branch?: string;
+    };
+  }>;
+  creator?: {
+    id: string;
+    name: string;
+  };
+  isOfficial: boolean;
+  popularity: number;
+  createdAt: string;
+  updatedAt: string;
+}

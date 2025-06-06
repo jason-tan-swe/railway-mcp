@@ -1,0 +1,207 @@
+{
+  "railway_mcp_server_test_suite": {
+    "overview": "Comprehensive test suite for the Railway MCP Server with 79+ tools across all phases",
+    "setup_instructions": [
+      "1. Set RAILWAY_API_TOKEN environment variable: export RAILWAY_API_TOKEN=your_token_here",
+      "2. Build the project: npm run build",
+      "3. Start the MCP server: npm start",
+      "4. In another terminal, test tools using the patterns below"
+    ],
+    "test_categories": {
+      "phase_1_core_infrastructure": {
+        "description": "Environment, Logs, Custom Domains (19 tools)",
+        "critical_tests": [
+          {
+            "tool": "project_list",
+            "test": "echo '{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"project_list\", \"arguments\": {}}}' | nc localhost 3000",
+            "expected": "List of user projects"
+          },
+          {
+            "tool": "environment-list",
+            "test": "echo '{\"jsonrpc\": \"2.0\", \"id\": 2, \"method\": \"tools/call\", \"params\": {\"name\": \"environment-list\", \"arguments\": {\"projectId\": \"PROJECT_ID\"}}}' | nc localhost 3000",
+            "expected": "Project environments"
+          },
+          {
+            "tool": "logs-deployment",
+            "test": "echo '{\"jsonrpc\": \"2.0\", \"id\": 3, \"method\": \"tools/call\", \"params\": {\"name\": \"logs-deployment\", \"arguments\": {\"deploymentId\": \"DEPLOYMENT_ID\"}}}' | nc localhost 3000",
+            "expected": "Deployment logs"
+          }
+        ]
+      },
+      "phase_2_developer_experience": {
+        "description": "GitHub, Templates, Database Plugins (19 tools)",
+        "critical_tests": [
+          {
+            "tool": "github-repos",
+            "test": "echo '{\"jsonrpc\": \"2.0\", \"id\": 4, \"method\": \"tools/call\", \"params\": {\"name\": \"github-repos\", \"arguments\": {}}}' | nc localhost 3000",
+            "expected": "Connected GitHub repositories"
+          },
+          {
+            "tool": "template-list",
+            "test": "echo '{\"jsonrpc\": \"2.0\", \"id\": 5, \"method\": \"tools/call\", \"params\": {\"name\": \"template-list\", \"arguments\": {}}}' | nc localhost 3000",
+            "expected": "Available templates"
+          },
+          {
+            "tool": "plugin-types",
+            "test": "echo '{\"jsonrpc\": \"2.0\", \"id\": 6, \"method\": \"tools/call\", \"params\": {\"name\": \"plugin-types\", \"arguments\": {}}}' | nc localhost 3000",
+            "expected": "Supported database types"
+          }
+        ]
+      },
+      "phase_3_advanced_features": {
+        "description": "Teams, Webhooks, Usage, Resources (30 tools)",
+        "critical_tests": [
+          {
+            "tool": "team-list",
+            "test": "echo '{\"jsonrpc\": \"2.0\", \"id\": 7, \"method\": \"tools/call\", \"params\": {\"name\": \"team-list\", \"arguments\": {}}}' | nc localhost 3000",
+            "expected": "User teams and organizations"
+          },
+          {
+            "tool": "webhook-events",
+            "test": "echo '{\"jsonrpc\": \"2.0\", \"id\": 8, \"method\": \"tools/call\", \"params\": {\"name\": \"webhook-events\", \"arguments\": {}}}' | nc localhost 3000",
+            "expected": "Supported webhook event types"
+          },
+          {
+            "tool": "usage-team",
+            "test": "echo '{\"jsonrpc\": \"2.0\", \"id\": 9, \"method\": \"tools/call\", \"params\": {\"name\": \"usage-team\", \"arguments\": {\"teamId\": \"TEAM_ID\"}}}' | nc localhost 3000",
+            "expected": "Team usage metrics"
+          },
+          {
+            "tool": "resource-quotas",
+            "test": "echo '{\"jsonrpc\": \"2.0\", \"id\": 10, \"method\": \"tools/call\", \"params\": {\"name\": \"resource-quotas\", \"arguments\": {\"teamId\": \"TEAM_ID\"}}}' | nc localhost 3000",
+            "expected": "Resource quota information"
+          }
+        ]
+      },
+      "original_core_tools": {
+        "description": "Original project management tools (11 tools)",
+        "critical_tests": [
+          {
+            "tool": "service_list",
+            "test": "echo '{\"jsonrpc\": \"2.0\", \"id\": 11, \"method\": \"tools/call\", \"params\": {\"name\": \"service_list\", \"arguments\": {\"projectId\": \"PROJECT_ID\"}}}' | nc localhost 3000",
+            "expected": "Project services"
+          },
+          {
+            "tool": "variable_list",
+            "test": "echo '{\"jsonrpc\": \"2.0\", \"id\": 12, \"method\": \"tools/call\", \"params\": {\"name\": \"variable_list\", \"arguments\": {\"projectId\": \"PROJECT_ID\", \"environmentId\": \"ENV_ID\"}}}' | nc localhost 3000",
+            "expected": "Environment variables"
+          }
+        ]
+      }
+    },
+    "workflow_tests": {
+      "complete_deployment_workflow": {
+        "description": "End-to-end deployment workflow test",
+        "steps": [
+          "1. project_list - Get available projects",
+          "2. project_create - Create new project if needed",
+          "3. environment-list - Check project environments",
+          "4. github-repos - Connect repository",
+          "5. service_create_from_repo - Deploy from GitHub",
+          "6. deployment-list - Monitor deployment",
+          "7. logs-deployment - Check deployment logs",
+          "8. domain-create - Set up custom domain",
+          "9. variable_set - Configure environment variables",
+          "10. webhook-create - Set up notifications"
+        ]
+      },
+      "database_setup_workflow": {
+        "description": "Database setup and management",
+        "steps": [
+          "1. plugin-types - List available databases",
+          "2. plugin-create - Create PostgreSQL instance", 
+          "3. variable_list - Get connection variables",
+          "4. service_connect_database - Connect service to DB",
+          "5. logs-plugin - Monitor database logs",
+          "6. usage-project - Track resource usage"
+        ]
+      },
+      "team_management_workflow": {
+        "description": "Team and collaboration setup",
+        "steps": [
+          "1. team-list - View teams",
+          "2. team-create - Create organization", 
+          "3. team-invite - Invite team members",
+          "4. team-members - Manage member roles",
+          "5. project_transfer - Move projects to team",
+          "6. resource-quotas - Monitor team usage"
+        ]
+      }
+    },
+    "testing_methodology": {
+      "manual_testing": {
+        "description": "Use JSON-RPC over stdio to test tools",
+        "command_pattern": "echo 'JSON_RPC_REQUEST' | nc localhost 3000",
+        "required_replacements": {
+          "PROJECT_ID": "Get from project_list response",
+          "ENV_ID": "Get from environment-list response", 
+          "TEAM_ID": "Get from team-list response",
+          "DEPLOYMENT_ID": "Get from deployment-list response"
+        }
+      },
+      "automated_testing": {
+        "description": "Script-based testing approach",
+        "bash_example": "#!/bin/bash\n# Get project ID\nPROJECT=$(echo '{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"project_list\", \"arguments\": {}}}' | nc localhost 3000 | jq -r '.result.content[0].data.projects[0].id')\n# Use project ID in subsequent calls\necho \"Testing with project: $PROJECT\""
+      },
+      "error_handling_tests": {
+        "invalid_token": "Test with invalid RAILWAY_API_TOKEN",
+        "missing_ids": "Test tools with non-existent project/service IDs",
+        "rate_limiting": "Test rapid successive calls",
+        "network_issues": "Test with Railway API unavailable"
+      }
+    },
+    "validation_checklist": {
+      "basic_functionality": [
+        "✓ All 79 tools register successfully",
+        "✓ Authentication works with Railway API",
+        "✓ Error responses are properly formatted",
+        "✓ Tool descriptions are informative",
+        "✓ Required parameters are validated"
+      ],
+      "advanced_functionality": [
+        "✓ Tool relationships work correctly",
+        "✓ Complex workflows complete successfully", 
+        "✓ Resource management tools provide accurate data",
+        "✓ Real-time logs and monitoring function",
+        "✓ Webhook delivery and testing work"
+      ],
+      "production_readiness": [
+        "✓ Error handling is robust",
+        "✓ API rate limiting is respected",
+        "✓ Security best practices followed",
+        "✓ Performance is acceptable",
+        "✓ All file sizes under 200 lines"
+      ]
+    }
+  },
+  "quick_smoke_test": {
+    "description": "5-minute test to verify basic functionality",
+    "commands": [
+      {
+        "step": 1,
+        "description": "Test authentication and project listing",
+        "command": "echo '{\"jsonrpc\": \"2.0\", \"id\": 1, \"method\": \"tools/call\", \"params\": {\"name\": \"project_list\", \"arguments\": {}}}' | nc localhost 3000"
+      },
+      {
+        "step": 2, 
+        "description": "Test Phase 1 tool (environments)",
+        "command": "echo '{\"jsonrpc\": \"2.0\", \"id\": 2, \"method\": \"tools/call\", \"params\": {\"name\": \"environment-list\", \"arguments\": {\"projectId\": \"REPLACE_WITH_PROJECT_ID\"}}}' | nc localhost 3000"
+      },
+      {
+        "step": 3,
+        "description": "Test Phase 2 tool (templates)",
+        "command": "echo '{\"jsonrpc\": \"2.0\", \"id\": 3, \"method\": \"tools/call\", \"params\": {\"name\": \"template-list\", \"arguments\": {}}}' | nc localhost 3000"
+      },
+      {
+        "step": 4,
+        "description": "Test Phase 3 tool (teams)",  
+        "command": "echo '{\"jsonrpc\": \"2.0\", \"id\": 4, \"method\": \"tools/call\", \"params\": {\"name\": \"team-list\", \"arguments\": {}}}' | nc localhost 3000"
+      },
+      {
+        "step": 5,
+        "description": "Test configuration and tool listing",
+        "command": "echo '{\"jsonrpc\": \"2.0\", \"id\": 5, \"method\": \"tools/list\", \"params\": {}}' | nc localhost 3000"
+      }
+    ]
+  }
+}
