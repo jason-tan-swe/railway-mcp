@@ -1,4 +1,5 @@
 import { BaseApiClient } from './base-client.js';
+import { CustomDomainRepository } from './repository/customDomain.repo.js';
 import { DeploymentRepository } from './repository/deployment.repo.js';
 import { DomainRepository } from './repository/domain.repo.js';
 import { EnvironmentRepository } from './repository/environment.repo.js';
@@ -10,6 +11,7 @@ import { VariableRepository } from './repository/variable.repo.js';
 import { VolumeRepository } from './repository/volume.repo.js';
 
 export class RailwayApiClient extends BaseApiClient {
+  public readonly customDomains: CustomDomainRepository;
   public readonly deployments: DeploymentRepository;
   public readonly domains: DomainRepository;
   public readonly environments: EnvironmentRepository;
@@ -23,6 +25,7 @@ export class RailwayApiClient extends BaseApiClient {
 
   public constructor() {
     super();
+    this.customDomains = new CustomDomainRepository(this);
     this.deployments = new DeploymentRepository(this);
     this.domains = new DomainRepository(this);
     this.environments = new EnvironmentRepository(this);

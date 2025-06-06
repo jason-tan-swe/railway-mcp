@@ -1,3 +1,4 @@
+export { customDomainService } from './customDomain.service.js';
 export { databaseService } from './database.service.js';
 export { deploymentService } from './deployment.service.js';
 export { domainService } from './domain.service.js';
