@@ -1,6 +1,6 @@
 {
-  "name": "@jasontanswe/railway-mcp",
-  "version": "1.2.1",
+  "name": "@crazyrabbitltc/railway-mcp",
+  "version": "2.0.0",
   "main": "build/index.js",
   "type": "module",
   "scripts": {
@@ -23,19 +23,41 @@
     "api",
     "cli",
     "model-context-protocol",
-    "railway-app"
+    "railway-app",
+    "enterprise",
+    "infrastructure",
+    "devops",
+    "ai-assistant",
+    "cloud-deployment",
+    "github-integration",
+    "database-management",
+    "security",
+    "monitoring",
+    "backup",
+    "compliance"
   ],
-  "author": "Jason Tan",
+  "author": {
+    "name": "CrazyRabbitLTC", 
+    "email": "dennison@dennison.tech",
+    "url": "https://github.com/crazyrabbitLTC"
+  },
+  "contributors": [
+    {
+      "name": "Jason Tan",
+      "url": "https://github.com/jason-tan-swe",
+      "role": "Original Creator"
+    }
+  ],
   "license": "MIT",
-  "description": "Model Context Protocol server for Railway.app - Enables AI agents to manage Railway infrastructure through natural language",
+  "description": "Railway MCP Server - 146+ tools with 100% Railway API coverage, comprehensive MCP testing framework, and real infrastructure management through AI assistants. Enhanced version with enterprise features, based on original work by Jason Tan.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jason-tan-swe/railway-mcp.git"
+    "url": "git+https://github.com/crazyrabbitLTC/railway-mcp.git"
   },
   "bugs": {
-    "url": "https://github.com/jason-tan-swe/railway-mcp/issues"
+    "url": "https://github.com/crazyrabbitLTC/railway-mcp/issues"
   },
-  "homepage": "https://github.com/jason-tan-swe/railway-mcp#readme",
+  "homepage": "https://github.com/crazyrabbitLTC/railway-mcp#readme",
   "publishConfig": {
     "access": "public"
   },
