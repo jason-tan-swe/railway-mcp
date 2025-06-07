@@ -104,6 +104,34 @@ ${serviceList || '  No services'}`;
     }
   }
 
+  async deleteProjects(projectIds: string[]): Promise<CallToolResult> {
+    try {
+      const results = [];
+      let deleted = 0;
+      let failed = 0;
+
+      for (const projectId of projectIds) {
+        try {
+          await this.client.projects.deleteProject(projectId);
+          results.push(`✅ Successfully deleted project: ${projectId}`);
+          deleted++;
+        } catch (error) {
+          results.push(`❌ Failed to delete project ${projectId}: ${formatError(error)}`);
+          failed++;
+        }
+      }
+
+      const summary = `Batch deletion complete: ${deleted} successful, ${failed} failed`;
+      
+      return createSuccessResponse({
+        text: `${summary}\n\n${results.join('\n')}`,
+        data: { deleted, failed, results }
+      });
+    } catch (error) {
+      return createErrorResponse(`Error in batch delete: ${formatError(error)}`);
+    }
+  }
+
   async listEnvironments(projectId: string) {
     try {
       const environments = await this.client.projects.listEnvironments(projectId);

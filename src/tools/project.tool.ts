@@ -107,6 +107,32 @@ export const projectTools = [
   ),
 
   createTool(
+    "project_delete_batch",
+    formatToolDescription({
+      type: 'API',
+      description: "Delete multiple Railway projects in batch",
+      bestFor: [
+        "Bulk cleanup of test projects",
+        "Removing multiple unused projects efficiently",
+      ],
+      notFor: [
+        "Single project deletion (use project_delete)",
+        "Production project cleanup"
+      ],
+      relations: {
+        prerequisites: ["project_list"],
+        related: ["project_delete", "project_create"]
+      }
+    }),
+    {
+      projectIds: z.array(z.string()).describe("Array of project IDs to delete")
+    },
+    async ({ projectIds }) => {
+      return projectService.deleteProjects(projectIds);
+    }
+  ),
+
+  createTool(
     "project_environments",
     "List all environments in a project",
     {
