@@ -1,5 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
+import { backupTools } from './backup.tool.js';
 import { configTools } from './config.tool.js';
 import { customDomainTools } from './customDomain.tool.js';
 import { databaseTools } from './database.tool.js';
@@ -8,9 +9,12 @@ import { domainTools } from './domain.tool.js';
 import { environmentTools } from './environment.tool.js';
 import { gitHubTools } from './github.tool.js';
 import { logsTools } from './logs.tool.js';
+import { monitoringTools } from './monitoring.tool.js';
+import { networkingTools } from './networking.tool.js';
 import { pluginTools } from './plugin.tool.js';
 import { projectTools } from './project.tool.js';
 import { resourceTools } from './resource.tool.js';
+import { securityTools } from './security.tool.js';
 import { serviceTools } from './service.tool.js';
 import { tcpProxyTools } from './tcpProxy.tool.js';
 import { teamTools } from './team.tool.js';
@@ -25,6 +29,7 @@ import { Tool } from '@/utils/tools.js';
 export function registerAllTools(server: McpServer) {
   // Collect all tools
   const allTools = [
+    ...backupTools,
     ...configTools,
     ...customDomainTools,
     ...databaseTools,
@@ -33,9 +38,12 @@ export function registerAllTools(server: McpServer) {
     ...environmentTools,
     ...gitHubTools,
     ...logsTools,
+    ...monitoringTools,
+    ...networkingTools,
     ...pluginTools,
     ...projectTools,
     ...resourceTools,
+    ...securityTools,
     ...serviceTools,
     ...tcpProxyTools,
     ...teamTools,

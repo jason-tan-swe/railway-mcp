@@ -23,9 +23,9 @@ export class BaseApiClient {
     const isDebug = debug === 'railway:*' || debug?.includes('railway:api');
 
     if (isDebug) {
-      console.error('GraphQL Request:');
-      console.error('Query:', query);
-      console.error('Variables:', JSON.stringify(variables, null, 2));
+      // console.error('GraphQL Request:');
+      // console.error('Query:', query);
+      // console.error('Variables:', JSON.stringify(variables, null, 2));
     }
 
     const response = await fetch(this.apiUrl, {
@@ -43,7 +43,7 @@ export class BaseApiClient {
     const result = await response.json() as GraphQLResponse<T>;
 
     if (isDebug) {
-      console.error('GraphQL Response:', JSON.stringify(result, null, 2));
+      // console.error('GraphQL Response:', JSON.stringify(result, null, 2));
     }
 
     if (result.errors && result.errors.length > 0) {
