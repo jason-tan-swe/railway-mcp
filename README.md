@@ -511,6 +511,86 @@ We welcome contributions from the community! Please see our [Contributing Guidel
 
 </details>
 
+## 💻 **MCP Client Examples**
+
+<details>
+<summary><strong>🖥️ Claude Desktop Usage</strong></summary>
+
+After installing via Smithery or manual configuration, you can use natural language to manage Railway infrastructure:
+
+```
+# Project Management
+"List all my Railway projects"
+"Create a new project called 'my-startup-app'"
+"Show me details for project abc123"
+
+# Full-Stack Deployment
+"Deploy a Next.js app from my GitHub repo 'username/my-app'"
+"Add a PostgreSQL database to this project"
+"Set the DATABASE_URL environment variable for my service"
+"Create a custom domain for my app"
+
+# Monitoring & Maintenance
+"Show me the logs for my service deployment"
+"Create a backup of my database"
+"Set up daily automated backups"
+"Generate a security audit report"
+```
+
+Claude Desktop excels at orchestrating complex workflows and providing detailed explanations of Railway operations.
+
+</details>
+
+<details>
+<summary><strong>⚡ Claude Code (CLI) Usage</strong></summary>
+
+Claude Code provides powerful terminal integration for development workflows:
+
+```bash
+# In your terminal with Claude Code
+claude "List my Railway projects and deploy the latest version of my app"
+
+# Development workflow
+claude "Create a staging environment, deploy my current branch, and run tests"
+
+# Infrastructure management
+claude "Scale up my database, check performance metrics, and optimize if needed"
+
+# Emergency response
+claude "My app is down - check logs, identify issues, and redeploy if necessary"
+```
+
+Claude Code is ideal for development workflows, CI/CD automation, and rapid infrastructure management during development.
+
+</details>
+
+<details>
+<summary><strong>🎯 Cursor IDE Integration</strong></summary>
+
+Cursor provides seamless code-to-deployment workflows:
+
+```typescript
+// While coding in Cursor, use natural language:
+
+"Push my changes to GitHub and deploy to Railway staging environment"
+
+"This API needs a Redis cache - add Redis to Railway and update my environment variables"
+
+"Create a production environment with the same services as staging"
+
+"Set up monitoring alerts for this new API endpoint"
+
+// Cursor + Railway MCP workflow:
+// 1. Code changes in Cursor
+// 2. Cursor commits and pushes to GitHub  
+// 3. Railway MCP deploys automatically
+// 4. Monitor and manage through natural language
+```
+
+Cursor excels at connecting your development environment directly to Railway infrastructure with Git integration.
+
+</details>
+
 ## 🚀 **Example Workflows**
 
 <details>
