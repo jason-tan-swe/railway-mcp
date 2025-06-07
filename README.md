@@ -306,6 +306,21 @@ The Railway MCP server provides **intelligent tool filtering** to manage the com
 
 ### Configuration
 
+**By default, ALL tools are enabled** (no filtering). Tool filtering only activates when you explicitly set the `RAILWAY_TOOLS_FILTER` environment variable.
+
+#### Getting All Tools (Default Behavior)
+```bash
+# Method 1: No environment variable (default - all 146+ tools)
+npx @crazyrabbitltc/railway-mcp
+
+# Method 2: Set to "pro" category (all 146+ tools)
+export RAILWAY_TOOLS_FILTER="pro"
+
+# Method 3: Set to empty string (all 146+ tools)
+export RAILWAY_TOOLS_FILTER=""
+```
+
+#### Filtering Tools
 Set the `RAILWAY_TOOLS_FILTER` environment variable to filter tools:
 
 ```bash
@@ -314,9 +329,6 @@ export RAILWAY_TOOLS_FILTER="simple"
 
 # Developers - includes creation/management (65 tools) 
 export RAILWAY_TOOLS_FILTER="intermediate"
-
-# DevOps/Enterprise - all tools available (146+ tools)
-export RAILWAY_TOOLS_FILTER="pro"
 
 # Multiple categories
 export RAILWAY_TOOLS_FILTER="simple,deployment"
@@ -364,8 +376,9 @@ The server includes built-in tools to help manage filtering:
       "command": "npx",
       "args": ["-y", "@crazyrabbitltc/railway-mcp"],
       "env": {
-        "RAILWAY_API_TOKEN": "your-token-here",
-        "RAILWAY_TOOLS_FILTER": "intermediate,monitoring"
+        "RAILWAY_API_TOKEN": "your-token-here"
+        // No RAILWAY_TOOLS_FILTER = all tools (default)
+        // "RAILWAY_TOOLS_FILTER": "intermediate,monitoring"  // Optional filtering
       }
     }
   }
@@ -374,6 +387,9 @@ The server includes built-in tools to help manage filtering:
 
 **Command Line Usage:**
 ```bash
+# Default: All tools (no filtering)
+npx @crazyrabbitltc/railway-mcp
+
 # Test different filter configurations
 RAILWAY_TOOLS_FILTER="simple" npx @crazyrabbitltc/railway-mcp
 RAILWAY_TOOLS_FILTER="deployment,data" npx @crazyrabbitltc/railway-mcp
@@ -381,10 +397,11 @@ RAILWAY_TOOLS_FILTER="deployment,data" npx @crazyrabbitltc/railway-mcp
 
 ### Best Practices
 
-- **Start Simple**: Begin with `simple` category and add more as needed
+- **Default is All Tools**: No configuration needed for full functionality
+- **Start Simple When Filtering**: Begin with `simple` category and add more as needed
 - **Use Case Focused**: Combine complexity with use case (e.g., `intermediate,deployment`)
 - **Validate First**: Use `tool_filter_validate` to test configurations
-- **Document Choices**: Use `tool_filter_current` to verify active settings
+- **Check Current Status**: Use `tool_filter_current` to verify active settings
 
 ## Testing Framework
 
