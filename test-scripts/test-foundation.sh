@@ -6,17 +6,17 @@ set -e
 echo "🚀 Starting Foundation Testing Phase"
 echo "=================================="
 
-source ./test-utils.sh
+source test-scripts/test-utils.sh
 
 # Test 1: Project listing
 echo "📋 Testing project listing..."
-projects_response=$(call_tool "project-list" "")
+projects_response=$(call_tool "project_list" "")
 validate_success "$projects_response" "Project List"
 log_test_result "project-list" "PASS" "Successfully retrieved project list"
 
 # Test 2: Project creation
 echo "🏗️ Testing project creation..."
-create_response=$(call_tool "project-create" "\"name\": \"mcp-test-foundation-$(date +%s)\"")
+create_response=$(call_tool "project_create" "\"name\": \"mcp-test-foundation-$(date +%s)\"")
 validate_success "$create_response" "Project Creation"
 
 PROJECT_ID=$(extract_value "$create_response" ".result.content[0].data.id")
@@ -30,13 +30,13 @@ log_test_result "project-create" "PASS" "Created project $PROJECT_ID"
 
 # Test 3: Project info retrieval
 echo "ℹ️ Testing project info retrieval..."
-info_response=$(call_tool "project-info" "\"projectId\": \"$PROJECT_ID\"")
+info_response=$(call_tool "project_info" "\"projectId\": \"$PROJECT_ID\"")
 validate_success "$info_response" "Project Info"
 log_test_result "project-info" "PASS" "Retrieved project info for $PROJECT_ID"
 
 # Test 4: Environment listing
 echo "🌍 Testing environment listing..."
-env_response=$(call_tool "project-environments" "\"projectId\": \"$PROJECT_ID\"")
+env_response=$(call_tool "project_environments" "\"projectId\": \"$PROJECT_ID\"")
 validate_success "$env_response" "Environment List"
 log_test_result "project-environments" "PASS" "Retrieved environments for $PROJECT_ID"
 

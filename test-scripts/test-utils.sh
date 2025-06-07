@@ -32,11 +32,9 @@ init_test_environment() {
     fi
     
     # Check that build exists
-    if [ ! -f "../build/index.js" ]; then
+    if [ ! -f "build/index.js" ]; then
         echo -e "${YELLOW}⚠️ Build not found, running build...${NC}"
-        cd ..
         npm run build
-        cd test-scripts
     fi
     
     echo -e "${GREEN}✅ Test environment initialized${NC}"
@@ -50,16 +48,26 @@ call_tool() {
     # Log the tool call
     echo "TOOL_CALL: $tool_name with params: $params" >> "$TEST_LOG_FILE"
     
+    # Create JSON-RPC request
+    local request
+    if [ -z "$params" ] || [ "$params" = '""' ]; then
+        request='{"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {"name": "'$tool_name'", "arguments": {}}}'
+    else
+        request='{"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {"name": "'$tool_name'", "arguments": {'$params'}}}'
+    fi
+    
     # Make the call and capture response
     local response
-    if [ -z "$params" ] || [ "$params" = '""' ]; then
-        response=$(echo "{\"method\": \"tools/call\", \"params\": {\"name\": \"$tool_name\", \"arguments\": {}}}" | node ../build/index.js 2>&1)
+    if command -v gtimeout >/dev/null 2>&1; then
+        response=$(echo "$request" | gtimeout 10s node build/index.js 2>/dev/null | head -1)
     else
-        response=$(echo "{\"method\": \"tools/call\", \"params\": {\"name\": \"$tool_name\", \"arguments\": {$params}}}" | node ../build/index.js 2>&1)
+        # Fallback for macOS without timeout
+        response=$(echo "$request" | node build/index.js 2>/dev/null | head -1)
     fi
     
     # Log the response
     echo "RESPONSE: $response" >> "$TEST_LOG_FILE"
+    
     echo "$response"
 }
 
@@ -76,8 +84,16 @@ validate_success() {
     local response="$1"
     local operation_name="$2"
     
-    # Check if response contains error
-    if echo "$response" | grep -q '"error"'; then
+    # Check if response is valid JSON
+    if ! echo "$response" | jq . >/dev/null 2>&1; then
+        echo -e "${RED}❌ $operation_name: Invalid JSON response${NC}"
+        echo "Response: $response"
+        return 1
+    fi
+    
+    # Check if response contains JSON-RPC error
+    local error=$(echo "$response" | jq -r '.error // empty')
+    if [ -n "$error" ] && [ "$error" != "null" ] && [ "$error" != "" ]; then
         echo -e "${RED}❌ $operation_name failed:${NC}"
         echo "$response" | jq '.error' 2>/dev/null || echo "$response"
         return 1
@@ -89,7 +105,7 @@ validate_success() {
         return 0
     else
         echo -e "${YELLOW}⚠️ $operation_name: Unexpected response format${NC}"
-        echo "$response"
+        echo "Response: $response"
         return 1
     fi
 }

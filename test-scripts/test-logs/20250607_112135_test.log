@@ -1,0 +1,6 @@
+TOOL_CALL: project-list with params: 
+STDERR: BaseApiClient initialized
+Initializing with environment token: 6bf8c070-1474-4dd7-bb74-c53748e3151b
+Successfully initialized with environment token
+Railway MCP server running with API token from environment
+RESPONSE: 
