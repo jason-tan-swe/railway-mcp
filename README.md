@@ -209,7 +209,7 @@ npx -y @smithery/cli@latest run @jason-tan-swe/railway-mcp --config "{\"railwayA
 4. Paste this command into the 'Command' section, where <RAILWAY_API_TOKEN> is your accounts Railway token:
 
 ```bash
-npx -y @crazyrabbitltc/railway-mcp <RAILWAY_API_TOKEN>
+npx -y railway-mcp <RAILWAY_API_TOKEN>
 ```
 </details>
 
@@ -226,7 +226,7 @@ npx -y @crazyrabbitltc/railway-mcp <RAILWAY_API_TOKEN>
 ```json
    "railway": {
       "command": "npx",
-      "args": ["-y", "@crazyrabbitltc/railway-mcp"],
+      "args": ["-y", "railway-mcp"],
       "env": {
          "RAILWAY_API_TOKEN": "your-railway-api-token-here"
       }
@@ -243,7 +243,7 @@ When you have multiple MCP servers, your config file might look like this:
     // Add the railway-mcp server to your configuration with your API token
     "railway": {
       "command": "npx",
-      "args": ["-y", "@crazyrabbitltc/railway-mcp"],
+      "args": ["-y", "railway-mcp"],
       "env": {
         "RAILWAY_API_TOKEN": "your-railway-api-token-here"
       }
@@ -311,7 +311,7 @@ The Railway MCP server provides **intelligent tool filtering** to manage the com
 #### Getting All Tools (Default Behavior)
 ```bash
 # Method 1: No environment variable (default - all 146+ tools)
-npx @crazyrabbitltc/railway-mcp
+npx railway-mcp
 
 # Method 2: Set to "pro" category (all 146+ tools)
 export RAILWAY_TOOLS_FILTER="pro"
@@ -374,7 +374,7 @@ The server includes built-in tools to help manage filtering:
   "mcpServers": {
     "railway": {
       "command": "npx",
-      "args": ["-y", "@crazyrabbitltc/railway-mcp"],
+      "args": ["-y", "railway-mcp"],
       "env": {
         "RAILWAY_API_TOKEN": "your-token-here"
         // No RAILWAY_TOOLS_FILTER = all tools (default)
@@ -388,11 +388,11 @@ The server includes built-in tools to help manage filtering:
 **Command Line Usage:**
 ```bash
 # Default: All tools (no filtering)
-npx @crazyrabbitltc/railway-mcp
+npx railway-mcp
 
 # Test different filter configurations
-RAILWAY_TOOLS_FILTER="simple" npx @crazyrabbitltc/railway-mcp
-RAILWAY_TOOLS_FILTER="deployment,data" npx @crazyrabbitltc/railway-mcp
+RAILWAY_TOOLS_FILTER="simple" npx railway-mcp
+RAILWAY_TOOLS_FILTER="deployment,data" npx railway-mcp
 ```
 
 ### Best Practices
