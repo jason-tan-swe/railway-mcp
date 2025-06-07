@@ -1,14 +1,31 @@
 import { BaseService } from '@/services/base.service.js';
 import { createSuccessResponse, createErrorResponse, formatError } from '@/utils/responses.js';
+import Fuse from 'fuse.js';
 
 export class TemplatesService extends BaseService {
+
   public constructor() {
     super();
   }
 
-  async listTemplates() {
+  async listTemplates(searchQuery?: string) {
     try {
-      const templates = await this.client.templates.listTemplates();
+      let templates = await this.client.templates.listTemplates();
+
+      // If search query is provided, filter templates by name and description
+      if (searchQuery) {
+        const fuse = new Fuse(templates, {
+          keys: [{
+            name: 'name',
+            weight: 3,
+          }, {
+            name: 'description',
+            weight: 2,
+          }],
+          threshold: 0.3
+        });
+        templates = fuse.search(searchQuery).map(result => result.item);
+      }
       
       // Group templates by category
       const categorizedTemplates = templates.reduce((acc, template) => {
@@ -20,9 +37,13 @@ export class TemplatesService extends BaseService {
       }, {} as Record<string, typeof templates>);
 
       const formattedTemplates = Object.entries(categorizedTemplates)
-        .map(([category, templates]) => `
+        .map(([category, templates]) => {
+          // Sort templates by projects in descending order
+          const sortedTemplates = [...templates].sort((a, b) => b.projects - a.projects);
+          
+          return `
             📁 ${category}
-            ${templates.map(template => {
+            ${sortedTemplates.map(template => {
               const services = Object.entries(template.serializedConfig.services)
                 .map(([id, service]) => `
                     Service: ${service.name}
@@ -36,10 +57,13 @@ export class TemplatesService extends BaseService {
               return `  📦 ${template.name}
                 ID: ${template.id}
                 Description: ${template.description}
+                Projects: ${template.projects}
                 Services:
                 ${services}`;
             }).join('\n')}
-        `).join('\n');
+        `;
+        })
+        .join('\n');
 
       return createSuccessResponse({
         text: `Available templates:\n${formattedTemplates}`,
@@ -50,13 +74,14 @@ export class TemplatesService extends BaseService {
     }
   }
 
-  async createServiceFromTemplate(
+  async deployTemplate(
     projectId: string,
     templateId: string,
     environmentId: string,
-    name?: string
+    teamId?: string,
   ) {
     try {
+      // Get the template
       const templates = await this.client.templates.listTemplates();
       const template = templates.find(t => t.id === templateId);
       
@@ -64,42 +89,36 @@ export class TemplatesService extends BaseService {
         return createErrorResponse(`Template not found: ${templateId}`);
       }
 
-      // Get the first service from the template
-      const [serviceId, serviceConfig] = Object.entries(template.serializedConfig.services)[0];
-      
-      const serviceInput = {
-        projectId,
-        name: name || serviceConfig.name,
-        source: {
-          repo: serviceConfig.source?.repo,
-          image: serviceConfig.source?.image
-        }
-      };
-
-      const service = await this.client.services.createService(serviceInput);
-
-      // If there are template variables, set them
-      if (serviceConfig.variables) {
-        const variables = Object.entries(serviceConfig.variables).map(([name, config]) => ({
-          projectId,
-          environmentId,
-          serviceId: service.id,
-          name,
-          value: config.defaultValue.replace(/\$\{\{\s*secret\((\d+)(?:,\s*"[^"]*")?\)\s*\}\}/, () => 
-            Math.random().toString(36).substring(2, 15)
-          )
-        }));
-
-        await this.client.variables.upsertVariables(variables);
-      }
+      // Deploy the template
+      const response = await this.client.templates.deployTemplate(environmentId, projectId, template.serializedConfig, templateId, teamId);
 
       return createSuccessResponse({
-        text: `Created new service "${service.name}" from template ${template.name} (ID: ${service.id})`,
-        data: service
+        text: `Created new service "${template.name}" from template ${template.name} in project ${projectId}. Monitoring workflow status with ID: ${response.workflowId}`,
+        data: response
       });
     } catch (error) {
       return createErrorResponse(`Error creating service from template: ${formatError(error)}`);
     }
+  }
+
+  async getWorkflowStatus(workflowId: string) {
+    const response = await this.client.templates.getWorkflowStatus(workflowId);
+
+    if (response.error) {
+      return createErrorResponse(`Error with workflow ${workflowId}: ${response.error}`);
+    }
+
+    if (response.status.toLowerCase() === 'complete') {
+      return createSuccessResponse({
+        text: `Workflow ${workflowId} completed successfully`,
+        data: response
+      });
+    }
+
+    return createSuccessResponse({
+      text: `Workflow ${workflowId} is still running. Status: ${response.status}`,
+      data: response
+    });
   }
 }
 

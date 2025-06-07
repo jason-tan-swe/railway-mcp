@@ -30,48 +30,4 @@ export const databaseTools = [
       return databaseService.listDatabaseTypes();
     }
   ),
-
-  createTool(
-    "database_deploy_from_template",
-    formatToolDescription({
-      type: 'WORKFLOW',
-      description: "Deploy a pre-configured database using Railway's official templates and best practices",
-      bestFor: [
-        "Standard database deployments",
-        "Quick setup with security defaults",
-        "Common database types (PostgreSQL, MongoDB, Redis)"
-      ],
-      notFor: [
-        "Custom database versions",
-        "Complex configurations",
-        "Unsupported database types"
-      ],
-      relations: {
-        prerequisites: ["database_list_types"],
-        alternatives: ["service_create_from_image"],
-        nextSteps: ["variable_list", "service_info"],
-        related: ["volume_create", "service_update"]
-      }
-    }),
-    {
-      projectId: z.string().describe(
-        "ID of the project where the database will be deployed"
-      ),
-      id: z.string().describe(
-        "ID of the database template to deploy"
-      ),
-      region: RegionCodeSchema.describe(
-        "Region where the database should be deployed, pick the region closest to the users location"
-      ),
-      environmentId: z.string().describe(
-        "Environment ID where the database will be deployed (usually obtained from project_info)"
-      ),
-      name: z.string().optional().describe(
-        "Optional custom name for the database service. Default: {type}-database"
-      )
-    },
-    async ({ projectId, id, environmentId, region, name }) => {
-      return databaseService.createDatabaseFromTemplate(projectId, id, region, environmentId, name);
-    }
-  )
 ];

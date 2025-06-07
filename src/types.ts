@@ -57,7 +57,6 @@ export interface Project {
   isPublic: boolean;
   isTempProject: boolean;
   prDeploys: boolean;
-  prEnvCopyVolData: boolean;
   botPrEnvironments: boolean;
   subscriptionType?: string;
   subscriptionPlanLimit?: number;

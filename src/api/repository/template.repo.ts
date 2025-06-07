@@ -1,5 +1,4 @@
 import { RailwayApiClient } from '../api-client.js';
-import { GraphQLResponse } from '@/types.js';
 
 interface ServiceConfig {
   icon?: string;
@@ -24,7 +23,7 @@ interface ServiceConfig {
   }>;
 }
 
-interface Template {
+export interface Template {
   id: string;
   name: string;
   description: string;
@@ -32,6 +31,7 @@ interface Template {
   serializedConfig: {
     services: Record<string, ServiceConfig>;
   };
+  projects: number;
 }
 
 interface TemplatesResponse {
@@ -56,6 +56,7 @@ export class TemplateRepository {
               description
               category
               serializedConfig
+              projects
             }
           }
         }
@@ -64,5 +65,46 @@ export class TemplateRepository {
 
     const response = await this.client.request<TemplatesResponse>(query);
     return response.templates.edges.map(edge => edge.node);
+  }
+
+  async deployTemplate(environmentId: string, projectId: string, serializedConfig: { services: Record<string, ServiceConfig> }, templateId: string, teamId?: string) {
+    const query = `
+      mutation deployTemplate($environmentId: String, $projectId: String, $templateId: String!, $teamId: String, $serializedConfig: SerializedTemplateConfig!) {
+        templateDeployV2(input: {
+          environmentId: $environmentId,
+          projectId: $projectId,
+          templateId: $templateId,
+          teamId: $teamId,
+          serializedConfig: $serializedConfig
+        }) {
+          projectId
+          workflowId
+        }
+      }
+    `;
+
+    const response = await this.client.request<{ templateDeployV2: { projectId: string, workflowId: string } }>(query, {
+      environmentId,
+      projectId,
+      templateId,
+      teamId,
+      serializedConfig,
+    });
+
+    return response.templateDeployV2;
+  }
+
+  async getWorkflowStatus(workflowId: string) {
+    const query = `
+      query workflowStatus($workflowId:String!){
+        workflowStatus(workflowId:$workflowId) {
+          status
+          error
+        }
+      }
+    `;
+
+    const response = await this.client.request<{ workflowStatus: { status: string, error: string | null } }>(query, { workflowId });
+    return response.workflowStatus;
   }
 } 

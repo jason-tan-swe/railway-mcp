@@ -23,17 +23,19 @@ export const templateTools = [
         related: ["database_list_types"]
       }
     }),
-    {},
-    async () => {
-      return templatesService.listTemplates();
+    {
+      searchQuery: z.string().optional().describe("Optional search query to filter templates by name and description"),
+    },
+    async ({ searchQuery }) => {
+      return templatesService.listTemplates(searchQuery);
     }
   ),
 
   createTool(
-    "service_create_from_template",
+    "template_deploy",
     formatToolDescription({
-      type: 'API',
-      description: "Create a new service from a template",
+      type: 'WORKFLOW',
+      description: "Deploy a new service from a template",
       bestFor: [
         "Starting new services from templates",
         "Quick service deployment",
@@ -41,7 +43,6 @@ export const templateTools = [
       ],
       notFor: [
         "Custom service configurations",
-        "Database deployments (use database_deploy)",
         "GitHub repository deployments (use service_create_from_repo)"
       ],
       relations: {
@@ -55,15 +56,34 @@ export const templateTools = [
       projectId: z.string().describe("ID of the project to create the service in"),
       templateId: z.string().describe("ID of the template to use"),
       environmentId: z.string().describe("ID of the environment to deploy to"),
-      name: z.string().optional().describe("Optional custom name for the service")
+      teamId: z.string().optional().describe("ID of the team to create the service in (if not provided, will use the default team)")
     },
-    async ({ projectId, templateId, environmentId, name }: { 
+    async ({ projectId, templateId, environmentId, teamId }: { 
       projectId: string;
       templateId: string;
       environmentId: string;
-      name?: string;
+      teamId?: string;
     }) => {
-      return templatesService.createServiceFromTemplate(projectId, templateId, environmentId, name);
+      return templatesService.deployTemplate(projectId, templateId, environmentId, teamId);
     }
-  )
-]; 
+  ),
+  createTool(
+    "template_get_workflow_status",
+    formatToolDescription({
+      type: 'API',
+      description: "Get the status of a workflow",
+      bestFor: ["Checking workflow status"],
+      notFor: ["Creating new services"],
+      relations: {
+        nextSteps: ["service_info"],
+        related: ["template_list, template_deploy"]
+      }
+    }),
+    {
+      workflowId: z.string().describe("ID of the workflow to get the status of")
+    },
+    async ({ workflowId }) => {
+      return templatesService.getWorkflowStatus(workflowId);
+    }
+  ),
+];

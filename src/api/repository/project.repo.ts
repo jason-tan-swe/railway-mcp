@@ -38,7 +38,6 @@ export class ProjectRepository {
               isPublic
               isTempProject
               prDeploys
-              prEnvCopyVolData
               botPrEnvironments
               subscriptionType
               subscriptionPlanLimit
@@ -113,7 +112,6 @@ export class ProjectRepository {
           isPublic
           isTempProject
           prDeploys
-          prEnvCopyVolData
           botPrEnvironments
           subscriptionType
           subscriptionPlanLimit
