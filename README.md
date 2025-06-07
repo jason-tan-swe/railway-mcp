@@ -38,7 +38,7 @@ The most comprehensive [Model Context Protocol (MCP)](https://modelcontextprotoc
 
 **Original Creator:** [Jason Tan](https://github.com/jason-tan-swe) - Created the foundational Railway MCP server with core project and service management capabilities.
 
-**Enterprise Enhancement:** Significant expansion to achieve 100% Railway API coverage, adding 26+ advanced tools across enterprise security, monitoring, networking, and infrastructure management with comprehensive real-world testing.
+**Major Enterprise Enhancement by [Dennison Bertram](https://github.com/crazyrabbitLTC):** Transformed the project from 79 basic tools to a comprehensive 146+ tool enterprise platform with 100% Railway API coverage. Added complete enterprise security suite, advanced monitoring & observability, networking infrastructure, comprehensive MCP testing framework, batch operations, and real-world validation. This represents a fundamental upgrade from basic Railway management to a production-ready enterprise infrastructure platform.
 
 [![smithery badge](https://smithery.ai/badge/@jason-tan-swe/railway-mcp)](https://smithery.ai/server/@jason-tan-swe/railway-mcp)
 
