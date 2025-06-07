@@ -3,6 +3,7 @@
 import { BasicConnectivityTests } from './basic-connectivity.js';
 import { ProjectLifecycleTests } from './project-lifecycle.js';
 import { DatabaseDeploymentTests } from './database-deployment.js';
+import { ServiceDeploymentTests } from './service-deployment.js';
 
 /**
  * Main test runner for Railway MCP Server validation
@@ -67,9 +68,24 @@ async function main() {
       console.log(`\n✅ Database deployment tests passed (${databasePassed}/${databaseTotal})`);
     }
 
+    // Phase 4: Service Deployment Tests
+    console.log('\n🚀 Phase 4: Service Deployment Tests');
+    const serviceTests = new ServiceDeploymentTests();
+    const serviceResults = await serviceTests.runAll(token);
+
+    const servicePassed = serviceResults.filter(r => r.success).length;
+    const serviceTotal = serviceResults.length;
+
+    if (servicePassed < serviceTotal) {
+      console.error(`\n❌ Service deployment tests failed (${servicePassed}/${serviceTotal})`);
+      console.error('   Some service deployment features may not be working correctly');
+    } else {
+      console.log(`\n✅ Service deployment tests passed (${servicePassed}/${serviceTotal})`);
+    }
+
     // Overall summary
-    const totalPassed = basicPassed + projectPassed + databasePassed;
-    const totalTests = basicTotal + projectTotal + databaseTotal;
+    const totalPassed = basicPassed + projectPassed + databasePassed + servicePassed;
+    const totalTests = basicTotal + projectTotal + databaseTotal + serviceTotal;
     
     console.log(`\n🎯 Overall Test Results`);
     console.log(`========================`);
@@ -83,8 +99,8 @@ async function main() {
     }
 
     // TODO: Add more test phases here
-    // - Phase 4: Service Deployment Tests
-    // - Phase 5: Cleanup Tests
+    // - Phase 5: Advanced Workflow Tests
+    // - Phase 6: Error Scenario Tests
 
   } catch (error) {
     console.error('\n💥 Test suite failed with error:', error);

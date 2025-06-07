@@ -8,8 +8,9 @@
     "build": "tsc",
     "test": "node dist/index.js",
     "test:basic": "node dist/basic-connectivity.js",
-    "test:workflow": "node dist/workflow-tests.js",
-    "test:cleanup": "node dist/cleanup-tests.js",
+    "test:project": "node dist/project-lifecycle.js",
+    "test:database": "node dist/database-deployment.js",
+    "test:service": "node dist/service-deployment.js",
     "dev": "tsc && npm run test"
   },
   "dependencies": {
