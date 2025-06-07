@@ -31,7 +31,19 @@ export function createErrorResponse(message: string): CallToolResult {
 
 export function formatError(error: unknown): string {
   if (error instanceof Error) {
-    return error.message;
+    // Sanitize error messages to avoid exposing sensitive information
+    const message = error.message;
+    
+    // Remove potential file paths, API keys, and other sensitive data
+    const sanitized = message
+      .replace(/\/[^\s]+/g, '[PATH]') // Remove file paths
+      .replace(/[A-Za-z0-9+\/=]{32,}/g, '[REDACTED]') // Remove potential tokens/keys
+      .replace(/Bearer\s+[^\s]+/g, 'Bearer [REDACTED]') // Remove Bearer tokens
+      .replace(/token[:\s]+[^\s]+/gi, 'token: [REDACTED]') // Remove token values
+      .replace(/key[:\s]+[^\s]+/gi, 'key: [REDACTED]') // Remove key values
+      .replace(/password[:\s]+[^\s]+/gi, 'password: [REDACTED]'); // Remove passwords
+    
+    return sanitized;
   }
-  return String(error);
+  return 'An unknown error occurred';
 } 

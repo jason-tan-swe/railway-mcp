@@ -59,19 +59,19 @@ export const formatToolDescription = ({
     ].join('\n'),
     
     // Prerequisites section
-    relations?.prerequisites?.length! > 0 &&
+    (relations?.prerequisites?.length ?? 0) > 0 &&
       `→ Prerequisites: ${relations?.prerequisites?.join(', ')}`,
     
     // Alternatives section
-    relations?.alternatives?.length! > 0 &&
+    (relations?.alternatives?.length ?? 0) > 0 &&
       `→ Alternatives: ${relations?.alternatives?.join(', ')}`,
     
     // Next Steps section
-    relations?.nextSteps?.length! > 0 &&
+    (relations?.nextSteps?.length ?? 0) > 0 &&
       `→ Next steps: ${relations?.nextSteps?.join(', ')}`,
     
     // Related section
-    relations?.related?.length! > 0 &&
+    (relations?.related?.length ?? 0) > 0 &&
       `→ Related: ${relations?.related?.join(', ')}`
   ];
 

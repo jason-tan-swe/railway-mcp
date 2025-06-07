@@ -47,6 +47,7 @@ The most comprehensive [Model Context Protocol (MCP)](https://modelcontextprotoc
 <p align="center">
   <a href="#features">Features</a> •
   <a href="#installation">Installation</a> •
+  <a href="#tool-filtering">Tool Filtering</a> •
   <a href="#available-tools">Available Tools</a> •
   <a href="#example-workflows">Example Workflows</a> •
   <a href="#security-considerations">Security</a> •
@@ -291,6 +292,99 @@ This server best combines with MCP-clients that have access to terminal or with 
 - Sensitive variable values are automatically masked when displayed.
 - All API calls use HTTPS for secure communication.
 - The server's memory-only token storage means your token is never written to disk outside of the configuration file.
+
+## Tool Filtering
+
+The Railway MCP server provides **intelligent tool filtering** to manage the complexity of 146+ available tools. This feature allows you to expose only relevant subsets of tools based on your use case and complexity level.
+
+### Why Tool Filtering?
+
+- **Reduces Cognitive Load**: Focus on essential tools for your current task
+- **Improves LLM Performance**: Smaller tool sets lead to better tool selection
+- **Context Efficiency**: Saves valuable context tokens
+- **Role-Based Access**: Different tool sets for different user types
+
+### Configuration
+
+Set the `RAILWAY_TOOLS_FILTER` environment variable to filter tools:
+
+```bash
+# Basic users - essential operations only (42 tools)
+export RAILWAY_TOOLS_FILTER="simple"
+
+# Developers - includes creation/management (65 tools) 
+export RAILWAY_TOOLS_FILTER="intermediate"
+
+# DevOps/Enterprise - all tools available (146+ tools)
+export RAILWAY_TOOLS_FILTER="pro"
+
+# Multiple categories
+export RAILWAY_TOOLS_FILTER="simple,deployment"
+
+# Specific tools only
+export RAILWAY_TOOLS_FILTER="project_list,service_create_from_repo,deployment_info"
+
+# Mixed approach
+export RAILWAY_TOOLS_FILTER="simple,backup-restore,security-audit-logs"
+```
+
+### Available Categories
+
+#### Complexity Levels
+- **`simple`** (42 tools): Information, listing, and status operations
+- **`intermediate`** (65 tools): Includes simple + creation, deletion, basic management  
+- **`pro`** (146+ tools): All tools including advanced workflows and enterprise features
+
+#### Use Case Categories
+- **`core`** (25 tools): Essential project, service, and deployment management
+- **`deployment`** (18 tools): Service creation and deployment operations
+- **`data`** (20 tools): Database, volume, backup, and variable management
+- **`monitoring`** (22 tools): Logs, metrics, alerts, and observability
+- **`enterprise`** (35 tools): Advanced networking, security, and compliance
+- **`team`** (12 tools): Team management, usage, and billing
+- **`integration`** (15 tools): Webhooks, templates, and external integrations
+- **`utility`** (8 tools): Configuration and helper tools
+
+### Filter Management Tools
+
+The server includes built-in tools to help manage filtering:
+
+- **`tool_filter_current`**: Show active filter configuration
+- **`tool_filter_validate`**: Test filter strings before applying
+- **`tool_filter_examples`**: Get example configurations for different use cases  
+- **`tool_filter_categories`**: List all available categories with descriptions
+
+### Configuration Examples
+
+**Claude Desktop Configuration:**
+```json
+{
+  "mcpServers": {
+    "railway": {
+      "command": "npx",
+      "args": ["-y", "@crazyrabbitltc/railway-mcp"],
+      "env": {
+        "RAILWAY_API_TOKEN": "your-token-here",
+        "RAILWAY_TOOLS_FILTER": "intermediate,monitoring"
+      }
+    }
+  }
+}
+```
+
+**Command Line Usage:**
+```bash
+# Test different filter configurations
+RAILWAY_TOOLS_FILTER="simple" npx @crazyrabbitltc/railway-mcp
+RAILWAY_TOOLS_FILTER="deployment,data" npx @crazyrabbitltc/railway-mcp
+```
+
+### Best Practices
+
+- **Start Simple**: Begin with `simple` category and add more as needed
+- **Use Case Focused**: Combine complexity with use case (e.g., `intermediate,deployment`)
+- **Validate First**: Use `tool_filter_validate` to test configurations
+- **Document Choices**: Use `tool_filter_current` to verify active settings
 
 ## Testing Framework
 

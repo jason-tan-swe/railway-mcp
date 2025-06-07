@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { createTool, formatToolDescription } from '@/utils/tools.js';
 import { railwayClient } from '@/api/api-client.js';
+import { createSuccessResponse, createErrorResponse, formatError } from '@/utils/responses.js';
 
 export const configTools = [
   createTool(
@@ -29,24 +30,11 @@ export const configTools = [
     async ({ token }) => {
       try {
         await railwayClient.setToken(token);      
-        return {
-          content: [
-            {
-              type: "text" as const,
-              text: `✅ Successfully connected to Railway API`,
-            },
-          ],
-        };
+        return createSuccessResponse({
+          text: "✅ Successfully connected to Railway API"
+        });
       } catch (error) {
-        return {
-          isError: true,
-          content: [
-            {
-              type: "text" as const,
-              text: `❌ Failed to connect to Railway API: ${error instanceof Error ? error.message : 'Unknown error'}`,
-            },
-          ],
-        };
+        return createErrorResponse(`❌ Failed to connect to Railway API: ${formatError(error)}`);
       }
     }
   )

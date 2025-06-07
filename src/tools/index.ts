@@ -19,14 +19,19 @@ import { serviceTools } from './service.tool.js';
 import { tcpProxyTools } from './tcpProxy.tool.js';
 import { teamTools } from './team.tool.js';
 import { templateTools } from './template.tool.js';
+import { toolFilterTools } from './tool-filter.tool.js';
 import { usageTools } from './usage.tool.js';
 import { variableTools } from './variable.tool.js';
 import { volumeTools } from './volume.tool.js';
 import { webhookTools } from './webhook.tool.js';
 
 import { Tool } from '@/utils/tools.js';
+import { initializeToolFilter, shouldIncludeTool } from '@/utils/tool-filter.js';
 
 export function registerAllTools(server: McpServer) {
+  // Initialize tool filtering from environment variables
+  const filterConfig = initializeToolFilter();
+  
   // Collect all tools
   const allTools = [
     ...backupTools,
@@ -48,14 +53,24 @@ export function registerAllTools(server: McpServer) {
     ...tcpProxyTools,
     ...teamTools,
     ...templateTools,
+    ...toolFilterTools,
     ...usageTools,
     ...variableTools,
     ...volumeTools,
     ...webhookTools,
   ] as Tool[];
 
-  // Register each tool with the server
-  allTools.forEach((tool) => {
+  // Filter tools based on configuration
+  const filteredTools = allTools.filter((tool) => {
+    const toolName = tool[0]; // Tool name is the first element in the tuple
+    return shouldIncludeTool(toolName, filterConfig);
+  });
+
+  // Log registration statistics
+  console.error(`Registering ${filteredTools.length}/${allTools.length} tools with MCP server`);
+
+  // Register each filtered tool with the server
+  filteredTools.forEach((tool) => {
     server.tool(
       ...tool
     );

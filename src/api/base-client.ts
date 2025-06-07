@@ -15,7 +15,7 @@ export class BaseApiClient {
 
   async request<T>(query: string, variables?: Record<string, unknown>): Promise<T> {
     if (!this.token) {
-      console.error('No token available for request. Environment token:', process.env.RAILWAY_API_TOKEN);
+      console.error('No token available for request. Environment token exists:', !!process.env.RAILWAY_API_TOKEN);
       throw new Error('API token not set. Please either:\n1. Add RAILWAY_API_TOKEN to your environment variables, or\n2. Use the configure tool to set the token manually.');
     }
 
@@ -23,9 +23,7 @@ export class BaseApiClient {
     const isDebug = debug === 'railway:*' || debug?.includes('railway:api');
 
     if (isDebug) {
-      // console.error('GraphQL Request:');
-      // console.error('Query:', query);
-      // console.error('Variables:', JSON.stringify(variables, null, 2));
+      console.error('GraphQL Request initiated');
     }
 
     const response = await fetch(this.apiUrl, {
@@ -43,7 +41,7 @@ export class BaseApiClient {
     const result = await response.json() as GraphQLResponse<T>;
 
     if (isDebug) {
-      // console.error('GraphQL Response:', JSON.stringify(result, null, 2));
+      console.error('GraphQL Response received');
     }
 
     if (result.errors && result.errors.length > 0) {

@@ -81,7 +81,7 @@ export class RailwayApiClient extends BaseApiClient {
     // Initialize with environment token if available
     const envToken = process.env.RAILWAY_API_TOKEN;
     if (envToken) {
-      console.error('Initializing with environment token:', envToken);
+      console.error('Initializing with environment token: ***[REDACTED]***');
       try {
         this.token = envToken;
         await this.validateToken();
