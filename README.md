@@ -16,14 +16,14 @@
 
 <p align="center">
   <strong>
-  Complete Railway.app infrastructure management through natural language. Deploy full-stack applications, manage enterprise security, monitor performance, and orchestrate complex infrastructure - all via MCP.
+  Complete Railway.app infrastructure management through natural language. Deploy applications, manage enterprise features, monitor performance, and orchestrate infrastructure via MCP.
   </strong>
 </p>
 
 <p align="center">
   <table align="center">
     <th align="center">
-       🎉 PRODUCTION VALIDATED! 146+ tools with 100% Railway API coverage, comprehensive MCP testing framework, and proven real infrastructure management! 🚀
+       Production-ready Railway MCP server with 146+ tools, comprehensive API coverage, and intelligent tool filtering.
     </th>
   </table>
 </p>
@@ -38,7 +38,7 @@ The most comprehensive [Model Context Protocol (MCP)](https://modelcontextprotoc
 
 **Original Creator:** [Jason Tan](https://github.com/jason-tan-swe) - Created the foundational Railway MCP server with core project and service management capabilities.
 
-**Major Enterprise Enhancement by [Dennison Bertram](https://github.com/crazyrabbitLTC):** Transformed the project from 79 basic tools to a comprehensive 146+ tool enterprise platform with 100% Railway API coverage. Added complete enterprise security suite, advanced monitoring & observability, networking infrastructure, comprehensive MCP testing framework, batch operations, and real-world validation. This represents a fundamental upgrade from basic Railway management to a production-ready enterprise infrastructure platform.
+**Major Enterprise Enhancement by [Dennison Bertram](https://github.com/crazyrabbitLTC):** Expanded the project from 79 basic tools to a comprehensive 146+ tool enterprise platform with complete Railway API coverage. Added enterprise security features, advanced monitoring & observability, networking infrastructure, comprehensive MCP testing framework, batch operations, and intelligent tool filtering. This represents a significant upgrade from basic Railway management to a production-ready enterprise infrastructure platform.
 
 [![smithery badge](https://smithery.ai/badge/@jason-tan-swe/railway-mcp)](https://smithery.ai/server/@jason-tan-swe/railway-mcp)
 
@@ -209,7 +209,7 @@ npx -y @smithery/cli@latest run @jason-tan-swe/railway-mcp --config "{\"railwayA
 4. Paste this command into the 'Command' section, where <RAILWAY_API_TOKEN> is your accounts Railway token:
 
 ```bash
-npx -y @jasontanswe/railway-mcp <RAILWAY_API_TOKEN>
+npx -y @crazyrabbitltc/railway-mcp <RAILWAY_API_TOKEN>
 ```
 </details>
 
@@ -226,7 +226,7 @@ npx -y @jasontanswe/railway-mcp <RAILWAY_API_TOKEN>
 ```json
    "railway": {
       "command": "npx",
-      "args": ["-y", "@jasontanswe/railway-mcp"],
+      "args": ["-y", "@crazyrabbitltc/railway-mcp"],
       "env": {
          "RAILWAY_API_TOKEN": "your-railway-api-token-here"
       }
@@ -243,7 +243,7 @@ When you have multiple MCP servers, your config file might look like this:
     // Add the railway-mcp server to your configuration with your API token
     "railway": {
       "command": "npx",
-      "args": ["-y", "@jasontanswe/railway-mcp"],
+      "args": ["-y", "@crazyrabbitltc/railway-mcp"],
       "env": {
         "RAILWAY_API_TOKEN": "your-railway-api-token-here"
       }
