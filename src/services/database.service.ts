@@ -15,7 +15,7 @@ export class DatabaseService extends BaseService {
         if (!acc[config.category]) {
           acc[config.category] = [];
         }
-        acc[config.category].push({ type, ...config });
+        acc[config.category].push({ ...config, type: type as any });
         return acc;
       }, {} as Record<string, Array<{ type: string } & typeof DATABASE_CONFIGS[keyof typeof DATABASE_CONFIGS]>>);
 
@@ -113,8 +113,8 @@ ${databases.map(db => `  💾 ${db.defaultName}
       const volume = await this.client.volumes.createVolume({
         projectId,
         environmentId,
-        serviceId: service.id,
-        mountPath: "/data" // TODO: Make this configurable
+        mountPath: "/data", // TODO: Make this configurable
+        name: `${service.name}-volume-${Date.now()}`
       });
       if (!volume) {
         return createErrorResponse(`Error creating volume: Failed to create volume for ${service.id} in environment ${environmentId}`);

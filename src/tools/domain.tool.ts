@@ -62,8 +62,7 @@ export const domainTools = [
         environmentId,
         serviceId,
         domain,
-        suffix,
-        targetPort
+        suffix
       });
     }
   ),

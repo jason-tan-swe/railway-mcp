@@ -49,7 +49,7 @@ Created: ${volume.createdAt ? new Date(volume.createdAt).toLocaleString() : 'N/A
    */
   async createVolume(projectId: string, serviceId: string, environmentId: string, mountPath: string): Promise<CallToolResult> {
     try {
-      const input = { projectId, serviceId, environmentId, mountPath };
+      const input = { projectId, serviceId, environmentId, mountPath, name: 'volume-' + Date.now() };
 
       const volume = await this.client.volumes.createVolume(input);
       if (!volume) {

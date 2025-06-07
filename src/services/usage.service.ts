@@ -187,7 +187,7 @@ export class UsageService extends BaseService {
     try {
       const teamUsage = await this.client.usage.getTeamUsage(teamId);
       
-      let projectComparisons = [];
+      let projectComparisons: any[] = [];
       if (projectIds?.length) {
         const projectUsagePromises = projectIds.map(id => 
           this.client.usage.getProjectUsage(id)

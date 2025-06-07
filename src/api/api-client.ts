@@ -16,6 +16,11 @@ import { UsageRepository } from './repository/usage.repo.js';
 import { VariableRepository } from './repository/variable.repo.js';
 import { VolumeRepository } from './repository/volume.repo.js';
 import { WebhookRepository } from './repository/webhook.repo.js';
+import { BackupRepository } from './repository/backup.repo.js';
+import { SecurityRepository } from './repository/security.repo.js';
+import { MonitoringRepository } from './repository/monitoring.repo.js';
+import { NetworkingRepository } from './repository/networking.repo.js';
+import { DeploymentAdvancedRepository } from './repository/deployment-advanced.repo.js';
 
 export class RailwayApiClient extends BaseApiClient {
   public readonly customDomains: CustomDomainRepository;
@@ -35,6 +40,11 @@ export class RailwayApiClient extends BaseApiClient {
   public readonly variables: VariableRepository;
   public readonly volumes: VolumeRepository;
   public readonly webhooks: WebhookRepository;
+  public readonly backup: BackupRepository;
+  public readonly security: SecurityRepository;
+  public readonly monitoring: MonitoringRepository;
+  public readonly networking: NetworkingRepository;
+  public readonly deploymentAdvanced: DeploymentAdvancedRepository;
   private initialized: boolean = false;
 
   public constructor() {
@@ -56,6 +66,11 @@ export class RailwayApiClient extends BaseApiClient {
     this.variables = new VariableRepository(this);
     this.volumes = new VolumeRepository(this);
     this.webhooks = new WebhookRepository(this);
+    this.backup = new BackupRepository(this);
+    this.security = new SecurityRepository(this);
+    this.monitoring = new MonitoringRepository(this);
+    this.networking = new NetworkingRepository(this);
+    this.deploymentAdvanced = new DeploymentAdvancedRepository(this);
   }
 
   public async initialize(): Promise<void> {

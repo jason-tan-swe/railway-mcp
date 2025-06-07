@@ -69,7 +69,7 @@ export class TemplateService extends BaseService {
           readme: template.readme,
           isApproved: template.isApproved,
           activeProjects: template.activeProjects,
-          services: template.services
+          services: (template as any).services || []
         }
       });
     } catch (error) {

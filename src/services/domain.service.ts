@@ -98,7 +98,7 @@ export class DomainService extends BaseService {
         if (domains.serviceDomains.length > 0) {
           domainsText += 'Service Domains:\n';
           domains.serviceDomains.forEach(domain => {
-            domainsText += `- ${domain.domain} (ID: ${domain.id}, Port: ${domain.targetPort || 'default'})\n`;
+            domainsText += `- ${domain.domain} (ID: ${domain.id}, Port: ${(domain as any).targetPort || 'default'})\n`;
           });
         } else {
           domainsText += 'No service domains found.\n';
@@ -107,7 +107,7 @@ export class DomainService extends BaseService {
         domainsText += '\nCustom Domains:\n';
         if (domains.customDomains.length > 0) {
           domains.customDomains.forEach(domain => {
-            domainsText += `- ${domain.domain} (ID: ${domain.id}, Port: ${domain.targetPort || 'default'})\n`;
+            domainsText += `- ${domain.domain} (ID: ${domain.id}, Port: ${(domain as any).targetPort || 'default'})\n`;
           });
         } else {
           domainsText += 'No custom domains found.\n';

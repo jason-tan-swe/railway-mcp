@@ -89,7 +89,7 @@ Sleep Mode: ${serviceInstance.sleepApplication ? 'Enabled' : 'Disabled'}${deploy
     try {
       const service = await this.client.services.createService({
         projectId,
-        name,
+        name: name || 'service-' + Date.now(),
         source: {
           repo,
         }
@@ -108,7 +108,7 @@ Sleep Mode: ${serviceInstance.sleepApplication ? 'Enabled' : 'Disabled'}${deploy
     try {
       const service = await this.client.services.createService({
         projectId,
-        name,
+        name: name || 'service-' + Date.now(),
         source: {
           image,
         }
