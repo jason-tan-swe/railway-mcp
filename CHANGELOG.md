@@ -1,3 +1,16 @@
+# [2.3.0](https://github.com/crazyrabbitLTC/railway-mcp/compare/v2.2.0...v2.3.0) (2025-01-15)
+
+### Features
+
+* Add 'extra-simple' tool filtering category with 9 essential tools for complete beginners
+* Include core tools: project_list, service_list, service_info, deployment_list, deployment_status, logs-deployment, service_restart, variable_list, variable_set
+* Perfect for users who need minimal Railway management capabilities without overwhelming complexity
+
+### Documentation
+
+* Update README with extra-simple category usage and examples
+* Add comprehensive tests for new filtering category
+
 ## [1.2.1](https://github.com/jason-tan-swe/railway-mcp/compare/v1.2.0...v1.2.1) (2025-03-07)
 
 
