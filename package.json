@@ -1,6 +1,6 @@
 {
   "name": "@crazyrabbitltc/railway-mcp",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "main": "build/index.js",
   "type": "module",
   "scripts": {
