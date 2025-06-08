@@ -78,36 +78,40 @@ echo "📋 Test 1: No Filtering"
 unset RAILWAY_TOOLS_FILTER
 all_tools=$(test_tool_filter "No Filter" "" "All tools should be available")
 
-# Test 2: Simple category
-echo "📋 Test 2: Simple Category"
+# Test 2: Extra Simple category
+echo "📋 Test 2: Extra Simple Category"
+extra_simple_tools=$(test_tool_filter "Extra Simple Category" "extra-simple" "Only extra-simple tools should be available")
+
+# Test 3: Simple category
+echo "📋 Test 3: Simple Category"
 simple_tools=$(test_tool_filter "Simple Category" "simple" "Only simple tools should be available")
 
-# Test 3: Intermediate category  
-echo "📋 Test 3: Intermediate Category"
+# Test 4: Intermediate category  
+echo "📋 Test 4: Intermediate Category"
 intermediate_tools=$(test_tool_filter "Intermediate Category" "intermediate" "Simple + intermediate tools should be available")
 
-# Test 4: Pro category
-echo "📋 Test 4: Pro Category"
+# Test 5: Pro category
+echo "📋 Test 5: Pro Category"
 pro_tools=$(test_tool_filter "Pro Category" "pro" "All tools should be available")
 
-# Test 5: Multiple categories
-echo "📋 Test 5: Multiple Categories"
+# Test 6: Multiple categories
+echo "📋 Test 6: Multiple Categories"
 multi_tools=$(test_tool_filter "Multiple Categories" "simple,deployment" "Simple tools + deployment tools should be available")
 
-# Test 6: Specific tools
-echo "📋 Test 6: Specific Tools"
+# Test 7: Specific tools
+echo "📋 Test 7: Specific Tools"
 specific_tools=$(test_tool_filter "Specific Tools" "project_list,service_info" "Only specified tools should be available")
 
-# Test 7: Mixed categories and tools
-echo "📋 Test 7: Mixed Categories and Tools"
+# Test 8: Mixed categories and tools
+echo "📋 Test 8: Mixed Categories and Tools"
 mixed_tools=$(test_tool_filter "Mixed" "simple,project_delete" "Simple tools + project_delete should be available")
 
-# Test 8: Invalid filter
-echo "📋 Test 8: Invalid Filter"
+# Test 9: Invalid filter
+echo "📋 Test 9: Invalid Filter"
 invalid_tools=$(test_tool_filter "Invalid Filter" "nonexistent_category,fake_tool" "Should fallback to all tools")
 
-# Test 9: Use case categories
-echo "📋 Test 9: Use Case Categories"
+# Test 10: Use case categories
+echo "📋 Test 10: Use Case Categories"
 core_tools=$(test_tool_filter "Core Use Case" "core" "Core project/service management tools should be available")
 
 # Validation Tests
@@ -115,6 +119,8 @@ echo "🎯 Validation Tests"
 echo "==================="
 
 # Test specific tool presence/absence
+test_specific_tool "extra-simple" "project_list" "true"
+test_specific_tool "extra-simple" "project_create" "false"
 test_specific_tool "simple" "project_list" "true"
 test_specific_tool "simple" "project_delete_batch" "false"
 test_specific_tool "intermediate" "project_create" "true"
@@ -158,6 +164,7 @@ echo ""
 echo "📊 Test Summary"
 echo "==============="
 echo "No filter: $all_tools tools"
+echo "Extra simple: $extra_simple_tools tools"
 echo "Simple: $simple_tools tools"
 echo "Intermediate: $intermediate_tools tools"
 echo "Pro: $pro_tools tools"
@@ -168,6 +175,10 @@ echo "Invalid filter: $invalid_tools tools"
 echo "Core use case: $core_tools tools"
 
 # Validate expected ranges
+if [ "$extra_simple_tools" -ne 9 ]; then
+    echo "⚠️  Warning: Extra simple tools should be exactly 9, got $extra_simple_tools"
+fi
+
 if [ "$simple_tools" -lt 20 ] || [ "$simple_tools" -gt 50 ]; then
     echo "⚠️  Warning: Simple tools count ($simple_tools) outside expected range (20-50)"
 fi

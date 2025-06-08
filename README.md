@@ -324,6 +324,9 @@ export RAILWAY_TOOLS_FILTER=""
 Set the `RAILWAY_TOOLS_FILTER` environment variable to filter tools:
 
 ```bash
+# Complete beginners - absolute essentials only (9 tools)
+export RAILWAY_TOOLS_FILTER="extra-simple"
+
 # Basic users - essential operations only (42 tools)
 export RAILWAY_TOOLS_FILTER="simple"
 
@@ -343,6 +346,7 @@ export RAILWAY_TOOLS_FILTER="simple,backup-restore,security-audit-logs"
 ### Available Categories
 
 #### Complexity Levels
+- **`extra-simple`** (9 tools): Absolute essentials for basic service management
 - **`simple`** (42 tools): Information, listing, and status operations
 - **`intermediate`** (65 tools): Includes simple + creation, deletion, basic management  
 - **`pro`** (146+ tools): All tools including advanced workflows and enterprise features
@@ -391,6 +395,7 @@ The server includes built-in tools to help manage filtering:
 npx railway-mcp
 
 # Test different filter configurations
+RAILWAY_TOOLS_FILTER="extra-simple" npx railway-mcp
 RAILWAY_TOOLS_FILTER="simple" npx railway-mcp
 RAILWAY_TOOLS_FILTER="deployment,data" npx railway-mcp
 ```

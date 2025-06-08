@@ -745,6 +745,20 @@ export const TOOL_DEFINITIONS: Record<string, ToolDefinition> = {
  * Predefined category combinations for easy filtering
  */
 export const CATEGORY_PRESETS: Record<string, { description: string; tools: string[] }> = {
+  'extra-simple': {
+    description: 'Absolute essentials for basic service management (9 tools)',
+    tools: [
+      'project_list',
+      'service_list', 
+      'service_info',
+      'deployment_list',
+      'deployment_status',
+      'logs-deployment',
+      'service_restart',
+      'variable_list',
+      'variable_set'
+    ]
+  },
   simple: {
     description: 'Basic information and listing operations',
     tools: Object.keys(TOOL_DEFINITIONS).filter(name => TOOL_DEFINITIONS[name].complexity === 'simple')
