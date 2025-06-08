@@ -324,8 +324,9 @@ export RAILWAY_TOOLS_FILTER=""
 Set the `RAILWAY_TOOLS_FILTER` environment variable to filter tools:
 
 ```bash
-# Complete beginners - absolute essentials only (9 tools)
+# For complete beginners
 export RAILWAY_TOOLS_FILTER="extra-simple"
+npx railway-mcp
 
 # Basic users - essential operations only (42 tools)
 export RAILWAY_TOOLS_FILTER="simple"
