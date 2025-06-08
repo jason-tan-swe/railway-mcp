@@ -1,3 +1,11 @@
+# [2.3.1](https://github.com/crazyrabbitLTC/railway-mcp/compare/v2.3.0...v2.3.1) (2025-01-15)
+
+### Bug Fixes
+
+* Fix Railway API authentication using correct 'me' query per Railway API documentation
+* Resolve environment variable token initialization issues
+* Authentication now works correctly with tokens passed via MCP config
+
 # [2.3.0](https://github.com/crazyrabbitLTC/railway-mcp/compare/v2.2.0...v2.3.0) (2025-01-15)
 
 ### Features
