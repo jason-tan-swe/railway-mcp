@@ -113,20 +113,17 @@ export class RailwayApiClient extends BaseApiClient {
   }
 
   private async validateToken(): Promise<void> {
-    const query = `
-      query {
-        projects {
-          edges {
-            node {
-              id
-            }
+    try {
+      const response = await this.request<{ me: { name: string; email: string } }>(`
+        query {
+          me {
+            name
+            email
           }
         }
-      }
-    `;
-    
-    try {
-      await super.request(query);
+      `);
+      
+      // Just check if the query succeeded
     } catch (error) {
       throw new Error('Invalid API token. Please check your token and try again.');
     }
