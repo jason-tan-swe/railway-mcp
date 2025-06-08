@@ -1,6 +1,6 @@
 {
   "name": "@crazyrabbitltc/railway-mcp",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "main": "build/index.js",
   "type": "module",
   "scripts": {
@@ -37,7 +37,7 @@
     "compliance"
   ],
   "author": {
-    "name": "CrazyRabbitLTC", 
+    "name": "CrazyRabbitLTC",
     "email": "dennison@dennison.tech",
     "url": "https://github.com/crazyrabbitLTC"
   },
