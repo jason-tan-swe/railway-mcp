@@ -1,5 +1,3 @@
-[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/jason-tan-swe-railway-mcp-badge.png)](https://mseep.ai/app/jason-tan-swe-railway-mcp)
-
 # Railway MCP Server
 
 <p align="center">
@@ -36,6 +34,10 @@
 A [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server for integrating with the [Railway.app](https://railway.app) platform.
 
 [![smithery badge](https://smithery.ai/badge/@jason-tan-swe/railway-mcp)](https://smithery.ai/server/@jason-tan-swe/railway-mcp)
+
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/jason-tan-swe-railway-mcp-badge.png)](https://mseep.ai/app/jason-tan-swe-railway-mcp)
+
+[![Verified on MseeP](https://mseep.ai/badge.svg)](https://mseep.ai/app/a88ea45b-9be2-422b-98ef-19c4dcbedd05)
 
 ## Table of Contents
 
