@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/jason-tan-swe-railway-mcp-badge.png)](https://mseep.ai/app/jason-tan-swe-railway-mcp)
+
 # Railway MCP Server
 
 <p align="center">
