@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: railway-mcp
+  namespace: default
+  labels:
+    app: railway-mcp
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: railway-mcp
+
+  template:
+    metadata:
+      labels:
+        app: railway-mcp
+    spec:
+      serviceAccountName: mcp
+
+      containers:
+        - name: railway-mcp
+          image: us-central1-docker.pkg.dev/dimension-hq/apps/railway-mcp:latest
+          imagePullPolicy: Always
+
+          ports:
+            - containerPort: 8000
+
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
+
+          env:
+            - name: PORT
+              value: "8000"
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 30
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
