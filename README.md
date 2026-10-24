@@ -33,7 +33,7 @@
 
 A [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server for integrating with the [Railway.app](https://railway.app) platform.
 
-[![smithery badge](https://smithery.ai/badge/@jason-tan-swe/railway-mcp)](https://smithery.ai/server/@jason-tan-swe/railway-mcp)
+[![LightNow capabilities](https://lightnow.ai/badge/io.github.jason-tan-swe/railway-mcp)](https://lightnow.ai/servers/io.github.jason-tan-swe/railway-mcp)
 
 [![MseeP.ai Security Assessment Badge](https://mseep.net/pr/jason-tan-swe-railway-mcp-badge.png)](https://mseep.ai/app/jason-tan-swe-railway-mcp)
 
